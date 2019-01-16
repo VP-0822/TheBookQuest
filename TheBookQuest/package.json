@@ -1,0 +1,19 @@
+{
+  "name": "thebookquest",
+  "version": "1.0.0",
+  "description": "The book review and rate system, where students using university library can review book, check availablity of book, pre-issue book etc.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/infomediadesign/sad2019-1-team-7.git"
+  },
+  "author": "Team 7",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/infomediadesign/sad2019-1-team-7/issues"
+  },
+  "homepage": "https://github.com/infomediadesign/sad2019-1-team-7#readme"
+}
