@@ -4,7 +4,8 @@
   "description": "The book review and rate system, where students using university library can review book, check availablity of book, pre-issue book etc.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ."
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,18 @@
   "bugs": {
     "url": "https://github.com/infomediadesign/sad2019-1-team-7/issues"
   },
-  "homepage": "https://github.com/infomediadesign/sad2019-1-team-7#readme"
+  "homepage": "https://github.com/infomediadesign/sad2019-1-team-7#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "connect-flash": "^0.1.1",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "express-messages": "^1.0.1",
+    "express-session": "^1.15.6",
+    "express-validator": "^5.3.1",
+    "mongoose": "^5.4.5",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0"
+  }
 }
