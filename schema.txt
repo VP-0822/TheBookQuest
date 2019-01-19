@@ -1,0 +1,55 @@
+users :
+	firstname : String
+	lastname : String
+	userId : String
+	email : String
+	dob : Date
+	matriculation : Number
+	password : String
+	registrationDate : DateTime
+	
+literatureTypes
+	literatureTypeId : String
+	title : String
+	ISBN : Number
+	ISSN : Number
+	literatureType : String //Indexed
+	thumbnail : Image
+	authors : List
+	summary : String
+	publisher : String
+	year : Number
+	tags : List
+	
+literatures
+	literatureId : String
+	literatureTypeId : String
+	status : String
+	location: String //Rack position
+	
+literatureReviews
+	literatureTypeId : String
+	userId : String
+	reviewComment : String
+	rating : Number
+	reviewDate : DateTime
+	
+literatureRequests
+	requestId : String
+	userId : String
+	ISBN : Number
+	ISSN : Number
+	literatureName : String
+	comment : String
+	requestDate : DateTime
+	status : String
+	
+issues
+	issueId : String
+	literatureId : String
+	userId : String
+	issueDate : DateTime
+	returnDate : DateTime
+	
+	
+	
