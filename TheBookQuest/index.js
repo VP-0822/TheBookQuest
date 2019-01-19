@@ -5,8 +5,10 @@ const mongoose= require('mongoose');
 const expressValidator = require('express-validator');
 const session = require('express-session');
 const flash = require('express-flash');
-
-mongoose.connect('mongodb://localhost/thebook');
+const passport = require('passport');
+const database = require('./config/database');
+mongoose.connect(database.database);
+//mongoose.connect('mongodb://localhost/thebook');
 
 const app= express();
 
@@ -47,11 +49,22 @@ app.use(expressValidator({
             value : value
         };
     }
-}))
+}));
+
+//passport config
+require('./config/passport')(passport);
+//passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 //define controller for users
 let users = require('./controllers/auth/register');
 app.use('/users', users);
+
+app.get('/', function(req, res){
+    res.send('Work in progress...');
+});
 
 //start server
 app.listen(3000, function(){

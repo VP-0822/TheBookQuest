@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const passport = require('passport');
 
 //Bring in User Model
 let User = require('../../models/user');
@@ -14,12 +15,22 @@ router.get('/login', function(req,res){
     res.render('login', { custSuccessMessage : req.flash('success'), custErrorMessage : req.flash('error')});
 });
 
+// login process
+router.post('/login', function(req,res, next){
+    passport.authenticate('local',{
+        successRedirect:'/welcome',
+        failureRedirect:'/users/login',
+        failureFlash: true
+    })(req,res, next);
+});
+
+
 router.post('/register', function(req, res){
     const firstname = req.body.firstname;
     const lastname = req.body.lastname;
     const email = req.body.email;
     const dob = req.body.dob;
-    const maticulation = req.body.maticulation;
+    const matriculation = req.body.matriculation;
     const password = req.body.password;
     const confirm = req.body.confirm;
 
@@ -28,7 +39,7 @@ router.post('/register', function(req, res){
     req.checkBody('email', 'Email is required').notEmpty();
     req.checkBody('email', 'Email is not valid').isEmail();
     req.checkBody('dob','Date of Birth is required').notEmpty();
-    req.checkBody('maticulation','Maticulation Number is required').notEmpty();
+    req.checkBody('matriculation','Matriculation Number is required').notEmpty();
     req.checkBody('password','Password is required').notEmpty();
     req.checkBody('confirm','Passwords do not match').equals(req.body.password);
 
@@ -45,7 +56,7 @@ router.post('/register', function(req, res){
             lastname: lastname,
             email: email,
             dob: dob,
-            maticulation:maticulation,
+            matriculation:matriculation,
             password: password
         });
 

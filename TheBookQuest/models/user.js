@@ -18,7 +18,7 @@ const UserSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    maticulation:{
+    matriculation:{
         type: String,
         required: true
     },
