@@ -7,11 +7,11 @@ let User = require('../../models/user');
 
 //Register Form
 router.get('/register', function(req, res){
-    res.render('register.html');
+    res.render('register', { custSuccessMessage : req.flash('success'), custErrorMessage : req.flash('error')});
 });
 
 router.get('/login', function(req,res){
-    res.render('login.html');
+    res.render('login', { custSuccessMessage : req.flash('success'), custErrorMessage : req.flash('error')});
 });
 
 router.post('/register', function(req, res){
@@ -36,8 +36,8 @@ router.post('/register', function(req, res){
     
     if(errors){
         console.log(errors);
-        res.render('register.html', {
-            errors:errors
+        res.render('register', {
+            custErrorMessage:errors
         });
     } else {
         var newUser = new User({
@@ -55,18 +55,18 @@ router.post('/register', function(req, res){
                     console.log(err);
                 }
                 newUser.password = hash;
+                newUser.save(function(err){
+                    if(err){
+                        console.log(err);
+                        return;
+                    }
+                    else{
+                        req.flash('success','You are successfully registered!');
+                        res.redirect('/users/login');
+                        return;
+                    }
+                });
             });
-        });
-
-        newUser.save(function(err){
-            if(err){
-                console.log(err);
-                return;
-            }
-            else{
-                req.flash('success','You are successfully registered!');
-                res.redirect('/users/login');
-            }
         });
     }
 });

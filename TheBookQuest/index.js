@@ -3,8 +3,8 @@ const bodyParser = require('body-parser');
 const path=require('path');
 const mongoose= require('mongoose');
 const expressValidator = require('express-validator');
-const flash = require('connect-flash');
 const session = require('express-session');
+const flash = require('express-flash');
 
 mongoose.connect('mongodb://localhost/thebook');
 
@@ -12,23 +12,24 @@ const app= express();
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.set('views', path.join(__dirname, 'views'));
-app.engine('html', require('ejs').renderFile);
+//app.engine('html', require('ejs').renderFile);
+app.set("view engine","ejs");
 app.use(express.static(path.join(__dirname, 'public')));
 
 //express session middleware
 app.use(session({
     secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true }
+    resave: true,
+    saveUninitialized: true
   }));
+app.use(flash());
 
 //Express messages middleware
-app.use(require('connect-flash')());
-app.use(function (req, res, next) {
-  res.locals.messages = require('express-messages')(req, res);
-  next();
-});
+// app.use(require('connect-flash')());
+// app.use(function (req, res, next) {
+//   res.locals.messages = require('express-messages')(req, res);
+//   next();
+// });
 
 //Express validator middleware
 app.use(expressValidator({
@@ -47,8 +48,6 @@ app.use(expressValidator({
         };
     }
 }))
-
-app.set('view engine', 'ejs');
 
 //define controller for users
 let users = require('./controllers/auth/register');

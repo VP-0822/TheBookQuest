@@ -1,0 +1,7 @@
+.pageHeaderCust{
+    padding-bottom: 0px;
+    padding-top: 20px;
+    padding-left: 10px !important;
+    background-image: url('../assets/images/library-page-header.jpg');
+    background-size: cover;
+}
