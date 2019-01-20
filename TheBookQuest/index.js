@@ -62,9 +62,9 @@ app.use(passport.session());
 let users = require('./controllers/auth/register');
 app.use('/users', users);
 
-app.get('/', function(req, res){
-    res.send('Work in progress...');
-});
+//define routes for welcome page
+let welcomePage = require('./controllers/welcome');
+app.use('/', welcomePage);
 
 //start server
 app.listen(3000, function(){

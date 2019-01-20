@@ -2,21 +2,22 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const authValidator = require('./authValidator');
 
 //Bring in User Model
 let User = require('../../models/user');
 
 //Register Form
-router.get('/register', function(req, res){
+router.get('/register', authValidator.isLoggedOut(), function(req, res){
     res.render('register', { custSuccessMessage : req.flash('success'), custErrorMessage : req.flash('error')});
 });
 
-router.get('/login', function(req,res){
+router.get('/login', authValidator.isLoggedOut(), function(req,res){
     res.render('login', { custSuccessMessage : req.flash('success'), custErrorMessage : req.flash('error')});
 });
 
 // login process
-router.post('/login', function(req,res, next){
+router.post('/login', authValidator.isLoggedOut(), function(req,res, next){
     passport.authenticate('local',{
         successRedirect:'/welcome',
         failureRedirect:'/users/login',
@@ -25,7 +26,7 @@ router.post('/login', function(req,res, next){
 });
 
 
-router.post('/register', function(req, res){
+router.post('/register', authValidator.isLoggedOut(), function(req, res){
     const firstname = req.body.firstname;
     const lastname = req.body.lastname;
     const email = req.body.email;
