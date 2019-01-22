@@ -62,6 +62,10 @@ app.use(passport.session());
 let users = require('./routes/signup');
 app.use('/users', users);
 
+//define routes for literature
+let literatures = require('./routes/literature/literature');
+app.use('/literatures', literatures);
+
 //define routes for welcome page
 let welcomePage = require('./routes/home');
 app.use('/', welcomePage);

@@ -5,16 +5,21 @@ users :
 	email : String
 	dob : Date
 	matriculation : Number
-	password : String
+	authenticationType : Number
 	registrationDate : DateTime
+	
+userAuthentications :
+	userId : String
+	password : String
+	auth_Tokens : Object
+	modifiedDate : Timestamp 
 	
 literatureTypes
 	literatureTypeId : String
 	title : String
-	ISBN : Number
-	ISSN : Number
-	literatureType : String //Indexed
-	thumbnail : Image
+	ISBN : String
+	ISSN : String
+	thumbnail : String
 	authors : List
 	summary : String
 	publisher : String
@@ -32,24 +37,24 @@ literatureReviews
 	userId : String
 	reviewComment : String
 	rating : Number
-	reviewDate : DateTime
+	reviewDate : Timestamp
 	
 literatureRequests
 	requestId : String
 	userId : String
-	ISBN : Number
-	ISSN : Number
+	ISBN : String
+	ISSN : String
 	literatureName : String
 	comment : String
-	requestDate : DateTime
+	requestDate : Timestamp
 	status : String
 	
-issues
+issues //Orders
 	issueId : String
 	literatureId : String
 	userId : String
-	issueDate : DateTime
-	returnDate : DateTime
+	issueDate : Timestamp
+	returnDate : Timestamp
 	
 	
 	
