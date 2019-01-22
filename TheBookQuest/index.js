@@ -59,11 +59,11 @@ app.use(passport.session());
 
 
 //define controller for users
-let users = require('./controllers/auth/register');
+let users = require('./routes/signup');
 app.use('/users', users);
 
 //define routes for welcome page
-let welcomePage = require('./controllers/welcome');
+let welcomePage = require('./routes/home');
 app.use('/', welcomePage);
 
 //start server
