@@ -1,14 +1,31 @@
 <% include partials/header %>
-<h1>Sign In</h1>
 <form action="/users/login" method="POST">
-    <div class="form-group">
-        <label>Email address</label>
-        <input class="form-control" name="email" type="text" placeholder="Email address">
-    </div>
-    <div class="form-group">
-            <label>Password</label>
-            <input class="form-control" name="password" type="password" placeholder="Password">
+    <div>
+        <div class="card mb-4 bg-dark text-white">
+            <div class="card-img backgroundImage" alt="Card image">
+            <div class="card-img-overlay">
+                <div class="row font-color-black">
+                <div class="col-sm-6">
+                    <span>Meet your next favorite book!</span>
+                </div>
+                <div class="col-sm-6">
+                    <h1>Sign In</h1>
+                    <div class="form-group">
+                        <label>Email address</label>
+                        <input class="form-control" name="email" type="text" placeholder="Email address">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input class="form-control" name="password" type="password" placeholder="Password">
+                    </div>
+                    <input class="btn btn-primary" type="submit" value="submit">
+                    <p>forgot your password? <a href="#">click here</a></p>
+				    <p>new user? <a href="/users/register">create new account</a></p>
+                </div>
+            </div>
+            </div>
+            </div>
         </div>
-    <input class="btn btn-primary" type="submit" value="submit">
+    </div>
 </form>
 <% include partials/footer %>

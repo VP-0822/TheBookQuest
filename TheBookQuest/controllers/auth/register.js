@@ -15,6 +15,12 @@ exports.login=function(req, res, next){
     })(req,res, next);
 };
 
+exports.logout = function(req, res){
+    req.logout();
+    res.redirect('/users/login');
+    return;
+}
+
 exports.register=function(req, res){
     const firstname = req.body.firstname;
     const lastname = req.body.lastname;
@@ -36,10 +42,13 @@ exports.register=function(req, res){
     let errors = req.validationErrors();
     
     if(errors){
-        console.log(errors);
-        res.render('register', {
-            custErrorMessage:errors
-        });
+        if(errors)
+        {
+            req.flash('error',errors[0].msg);
+        }
+        //res.redirect('/users/register');
+        req.render('/register');
+        return;
     } else {
         var newUser = new User({
             firstname: firstname,

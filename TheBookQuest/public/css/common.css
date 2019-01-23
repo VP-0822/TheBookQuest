@@ -5,3 +5,36 @@
     background-image: url('../assets/images/library-page-header.jpg');
     background-size: cover;
 }
+
+.navbar-login
+{
+    width: 305px;
+    padding: 10px;
+    padding-bottom: 0px;
+}
+
+.navbar-login-session
+{
+    padding: 10px;
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+.icon-size
+{
+    font-size: 87px;
+}
+
+.backgroundImage{
+    /* Full height */
+  height: 100%; 
+  background-image: url('../assets/images/library.jpg');
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.font-color-black{
+    color: black;
+}

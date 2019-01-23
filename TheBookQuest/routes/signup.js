@@ -18,4 +18,7 @@ router.post('/login', authValidator.isLoggedOut(), register.login);
 //register 
 router.post('/register', authValidator.isLoggedOut(), register.register);
 
+//logout
+router.get('/logout', authValidator.authValidator(), register.logout);
+
 module.exports = router;
