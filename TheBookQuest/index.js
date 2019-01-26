@@ -13,6 +13,7 @@ mongoose.connect(database.database);
 const app= express();
 
 app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.json())
 app.set('views', path.join(__dirname, 'views'));
 //app.engine('html', require('ejs').renderFile);
 app.set("view engine","ejs");
@@ -65,6 +66,22 @@ app.use('/users', users);
 //define routes for literature
 let literatures = require('./routes/literature/literature');
 app.use('/literatures', literatures);
+
+//define routes for literatureInstance
+let literatureInstances = require('./routes/literature/literatureInstance');
+app.use('/literature', literatureInstances);
+
+//define routes for reviews
+let reviews = require('./routes/literature/review');
+app.use('/reviews', reviews);
+
+//define routes for literature requests
+let requests = require('./routes/literature/literatureRequest');
+app.use('/requests', requests);
+
+//define routes for user profile
+let user = require('./routes/user');
+app.use('/user', user);
 
 //define routes for welcome page
 let welcomePage = require('./routes/home');

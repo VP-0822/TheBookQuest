@@ -5,14 +5,8 @@ users :
 	email : String
 	dob : Date
 	matriculation : Number
-	authenticationType : Number
-	registrationDate : DateTime
-	
-userAuthentications :
-	userId : String
 	password : String
-	auth_Tokens : Object
-	modifiedDate : Timestamp 
+	registrationDate : DateTime
 	
 literatureTypes
 	literatureTypeId : String
@@ -30,9 +24,10 @@ literatures
 	literatureId : String
 	literatureTypeId : String
 	status : String
-	location: String //Rack position
+	rack_location: String 
 	
-literatureReviews
+reviews
+	reviewId : String
 	literatureTypeId : String
 	userId : String
 	reviewComment : String
@@ -44,7 +39,7 @@ literatureRequests
 	userId : String
 	ISBN : String
 	ISSN : String
-	literatureName : String
+	literatureTitle : String
 	comment : String
 	requestDate : Timestamp
 	status : String

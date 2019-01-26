@@ -3,39 +3,97 @@ const router = express.Router();
 const authValidator = require('../../controllers/auth/authValidator');
 const literatureSearch = require('../../controllers/literature/literatureSearch')
 
-router.get('/', authValidator.authValidator(), literatureSearch.searchAllLiteratures)
-
-router.get('/:literatureTypeId', authValidator.authValidator(), literatureSearch.searchLiterature)
-
-router.get('/:stype/:query', authValidator.authValidator(), function(req, res){
-    //let searchJSON = req.body.searchJSON;
-    //req.checkBody('searchJSON', 'First name is required').notEmpty();
-
-    let searchType = req.params.stype;
-    let searchJSON = {query : req.params.query};
-    if(searchType)
-    {
-        switch(searchType)
-        {
-            case 'all':
-                literatureSearch.searchLiteraturesByQuery(req, res, searchJSON.query);
-                return;
-            case 'title':
-                literatureSearch.searchLiteraturesByTitles(req, res, searchJSON.query);
-                return;
-            case 'author':
-                literatureSearch.searchLiteraturesByAuthor(req, res, searchJSON.query);
-                return;
-            case 'tags':
-                literatureSearch.searchLiteraturesByTags(req, res, searchJSON.query);
-                return;
-            case 'publisher':
-                literatureSearch.searchLiteraturesByPublishers(req, res, searchJSON.query);
-                return;
-            default:
-                throw Error;
-        }
-    }
+router.get('/', authValidator.authValidator(), function(req, res){
+    literatureSearch.searchAllLiteratures(req, res, handleSuccessResponse, handleErrorResponse);
 })
+
+router.get('/literature/:literatureTypeId', authValidator.authValidator(), function(req, res){
+    let literatureId = req.params.literatureTypeId;
+    if(literatureId)
+    {
+        literatureSearch.searchLiterature(req, res, literatureId, handleSuccessResponse, handleErrorResponse)
+        return
+    }
+    handleErrorResponse(req, res, new Error('Invalid literature id'))
+})
+router.get('/searchtitle', authValidator.authValidator(), function(req, res){
+    let searchQuery = req.get('search-query');
+    if(searchQuery)
+    {
+        let searchJSON = JSON.parse(searchQuery);
+        literatureSearch.searchLiteraturesByTitles(req, res, searchJSON.query, handleSuccessResponse, handleErrorResponse);
+        return;
+    }
+    handleErrorResponse(req, res, new Error('Invalid search query provided.'))
+    return;
+})
+
+router.get('/searchauthor', authValidator.authValidator(), function(req, res){
+    let searchQuery = req.get('search-query');
+    if(searchQuery)
+    {
+        let searchJSON = JSON.parse(searchQuery);
+        literatureSearch.searchLiteraturesByAuthor(req, res, searchJSON.query, handleSuccessResponse, handleErrorResponse);
+        return;
+    }
+    handleErrorResponse(req, res, new Error('Invalid search query provided.'))
+    return;
+})
+
+router.get('/searchtags', authValidator.authValidator(), function(req, res){
+    let searchQuery = req.get('search-query');
+    if(searchQuery)
+    {
+        let searchJSON = JSON.parse(searchQuery);
+        literatureSearch.searchLiteraturesByTags(req, res, searchJSON.query, handleSuccessResponse, handleErrorResponse);
+        return;
+    }
+    handleErrorResponse(req, res, new Error('Invalid search query provided.'))
+    return;
+})
+
+router.get('/searchpublishers', authValidator.authValidator(), function(req, res){
+    let searchQuery = req.get('search-query');
+    if(searchQuery)
+    {
+        let searchJSON = JSON.parse(searchQuery);
+        literatureSearch.searchLiteraturesByPublishers(req, res, searchJSON.query, handleSuccessResponse, handleErrorResponse);
+        return;
+    }
+    handleErrorResponse(req, res, new Error('Invalid search query provided.'))
+    return;
+})
+
+router.get('/search', authValidator.authValidator(), function(req, res){
+    let searchQuery = req.get('search-query');
+    if(searchQuery)
+    {
+        let searchJSON = JSON.parse(searchQuery);
+        literatureSearch.searchLiteraturesByQuery(req, res, searchJSON.query, handleSuccessResponse, handleErrorResponse);
+        return;
+    }
+    handleErrorResponse(req, res, new Error('Invalid search query provided.'))
+    return;
+});
+
+function handleSuccessResponse(req, res, responseData, displayMessage)
+{
+    if(displayMessage)
+    {
+        req.flash('success', displayMessage);
+    }
+    if(responseData)
+    {
+        res.send(responseData)
+        return;
+    }
+    res.sendStatus(200);
+}
+
+function handleErrorResponse(req, res, err)
+{
+    req.flash('error', err.message);
+    req.sendStatus(500);
+}
 
 module.exports = router;

@@ -1,10 +1,9 @@
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const randomstring = require("randomstring");
 
 //Bring in User Model
 let User = require('../../models/user');
-
-
 
 // login process
 exports.login=function(req, res, next){
@@ -29,6 +28,7 @@ exports.register=function(req, res){
     const matriculation = req.body.matriculation;
     const password = req.body.password;
     const confirm = req.body.confirm;
+    const userId = randomstring.generate(10);
 
     req.checkBody('firstname', 'First name is required').notEmpty();
     req.checkBody('lastname', 'Last name is required').notEmpty();
@@ -56,7 +56,8 @@ exports.register=function(req, res){
             email: email,
             dob: dob,
             matriculation:matriculation,
-            password: password
+            password: password,
+            userId: userId
         });
 
         bcrypt.genSalt(10, function(err, salt){
@@ -79,6 +80,22 @@ exports.register=function(req, res){
             });
         });
     }
-};
+}
+
+exports.getUserProfile = function(req, res, userId, handleSuccessResponse, handleErrorResponse){
+    if(userId)
+    {
+        User.find({userId : userId}).lean().exec(function(err, result){
+            if(err)
+            {
+                handleErrorResponse(req, res, err)
+                return
+            }
+            handleSuccessResponse(req, res, result)
+        })
+        return
+    }
+    handleErrorResponse(req, res, new Error('User id not provided'))
+}
 
 //module.exports = {register: require('.')}
