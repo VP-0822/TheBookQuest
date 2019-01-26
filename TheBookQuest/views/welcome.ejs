@@ -9,16 +9,17 @@
                 Browse
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="#">Title</a>
                 <a class="dropdown-item" href="#">Author</a>
                 <a class="dropdown-item" href="#">Publisher Name</a>
-                <a class="dropdown-item" href="">Rating</a>
+                <a class="dropdown-item" href="">Tags</a>
             </div>
         </li>
     </ul>
     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 </form>
 <br>
-<div class="row">
+<div class="row" id="catalogue">
     <div class="col-md-4">
         <div class="card flex-md-row mb-4 shadow-sm h-md-250">
             <div class="card-body d-flex flex-column align-items-start">
@@ -30,8 +31,8 @@
                 <p class="card-text mb-auto">History (from Greek ἱστορία - historia, meaning "inquiry, knowledge
                     acquired by investigation") is the discovery, collection, organization, and presentation of
                     information about past events.</p>
-                <a class="btn btn-outline-primary btn-sm" role="button" href="http://www.jquery2dotnet.com/">Continue
-                    reading</a>
+                <button type="button" class="btn btn-primary" onclick="toggleElementVisibility('catalogue', 'singleItem')"><i class="fa fa-search"></i>
+                    Quick View</button>
             </div>
             <img class="card-img-right flex-auto d-none d-lg-block" alt="Thumbnail [200x250]" src="../assets/images/booksimage.jpg"
                 style="width: 200px; height: 250px;">
@@ -42,14 +43,14 @@
             <div class="card-body d-flex flex-column align-items-start">
                 <strong class="d-inline-block mb-2 text-primary">History</strong>
                 <h6 class="mb-0">
-                    <a class="text-dark" href="#">80 Percent of People Can’t Afford Basics</a>
+                    <a class="text-dark" href="#"> click 80 Percent of People Can’t Afford Basics</a>
                 </h6>
                 <div class="mb-1 text-muted small">Nov 13</div>
                 <p class="card-text mb-auto">History (from Greek ἱστορία - historia, meaning "inquiry, knowledge
                     acquired by investigation") is the discovery, collection, organization, and presentation of
                     information about past events.</p>
-                <a class="btn btn-outline-primary btn-sm" role="button" href="http://www.jquery2dotnet.com/">Continue
-                    reading</a>
+                <button type="button" class="btn btn-primary" onclick="toggleElementVisibility('catalogue', 'singleItem')"><i class="fa fa-search"></i>
+                 Quick View</button>
             </div>
             <img class="card-img-right flex-auto d-none d-lg-block" alt="Thumbnail [200x250]" src="../assets/images/booksimage.jpg"
                 style="width: 200px; height: 250px;">
@@ -66,12 +67,72 @@
                 <p class="card-text mb-auto">History (from Greek ἱστορία - historia, meaning "inquiry, knowledge
                     acquired by investigation") is the discovery, collection, organization, and presentation of
                     information about past events. </p>
-                <a class="btn btn-outline-primary btn-sm" role="button" href="http://www.jquery2dotnet.com/">Continue
-                    reading</a>
+
+                <button type="button" class="btn btn-primary" onclick="toggleElementVisibility('catalogue', 'singleItem')"><i class="fa fa-search"></i>
+                    Quick View</button>
             </div>
             <img class="card-img-right flex-auto d-none d-lg-block" alt="Thumbnail [200x250]" src="../assets/images/booksimage.jpg"
                 style="width: 200px; height: 250px;">
         </div>
     </div>
 </div>
+
+<div id="singleItem" style="display : none">
+    <div>
+        <div class="row">
+            <div class="offset-md-1">
+                <h3 class="modal-title" id="myModalLabel">History</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3 offset-md-1 book-img">
+                <img src="../assets/images/booksimage.jpg" class="img-responsive">
+            </div>
+            <div class="col-md-4 product_content">
+                <h4>Product Id: <span>51526</span></h4>
+                <div class="rating">
+                    <span class="glyphicon glyphicon-star"></span>
+                    <span class="glyphicon glyphicon-star"></span>
+                    <span class="glyphicon glyphicon-star"></span>
+                    <span class="glyphicon glyphicon-star"></span>
+                    <span class="glyphicon glyphicon-star"></span>
+                    (10 reviews)
+                </div>
+                <p>A hardback (with its original hard cover slip-case & dust-jacket) copy of ‘The Times
+                    Complete History of the World’ by Richard Overy, which was published in 2011.</p>
+
+                <div class="row">
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                        <select class="form-control" name="select">
+                            <option value="" selected="">rent</option>
+                            <option value="rate">rate</option>
+                        </select>
+                    </div>
+                    <!-- end col -->
+
+
+                    <div class="col-md-4 col-sm-12">
+                        <select class="form-control" name="select">
+                            <option value="" selected="">QTY</option>
+                            <option value="">1</option>
+                            <option value="">2</option>
+                            <option value="">3</option>
+                        </select>
+                    </div>
+                    <!-- end col -->
+                </div>
+                <div class="space-ten"></div>
+                <div class="btn-ground">
+                    <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-shopping-cart"></span>
+                        Add To Cart</button>
+                    <br/>
+                    <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-heart"></span>
+                        Add To Wishlist</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
 <% include partials/footer %>
