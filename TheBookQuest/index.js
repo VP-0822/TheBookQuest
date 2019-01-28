@@ -34,6 +34,15 @@ app.use(flash());
 //   next();
 // });
 
+//filter to add session user details in res.locals
+app.use(function(req, res, next) {
+    if(req.session.passport)
+    {
+        res.locals.user = req.session.passport.user;
+    }
+    next();
+});
+
 //Express validator middleware
 app.use(expressValidator({
     errorFormatter : function(param, msg, value) {

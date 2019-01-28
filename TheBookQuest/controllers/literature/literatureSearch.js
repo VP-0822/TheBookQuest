@@ -10,6 +10,7 @@ exports.searchAllLiteratures = function(req, res, handleSuccessResponse, handleE
         }
         handleSuccessResponse(req, res, docs)
     });
+    return
 }
 
 exports.searchLiterature = function(req, res, literatureId, handleSuccessResponse, handleErrorResponse){
@@ -21,6 +22,7 @@ exports.searchLiterature = function(req, res, literatureId, handleSuccessRespons
         }
         handleSuccessResponse(req, res, doc)
     });
+    return
 }
 
 exports.searchLiteraturesByAuthor = function(req, res, searchQuery, handleSuccessResponse, handleErrorResponse){
@@ -98,11 +100,13 @@ exports.searchLiteraturesByTitles = function(req, res, searchQuery, handleSucces
         LiteratureTypes.find({"title" : {$regex : modifiedSearchQuery, $options: 'i'}}).lean().exec(function(err, doc){
             if(err)
             {
+                console.log(err)
                 handleErrorResponse(req, res, err)
                 return
             }
             handleSuccessResponse(req, res, doc)
         });
+        return
     }
     handleErrorResponse(req, res, new Error('Invalid search query provided.'))
 }
@@ -118,6 +122,7 @@ exports.searchLiteratureInstanceById = function(req, res, searchQuery, handleSuc
             }
             handleSuccessResponse(req, res, doc)
         });
+        return
     }
     handleErrorResponse(req, res, new Error('Invalid literature id provided.'))
 }
