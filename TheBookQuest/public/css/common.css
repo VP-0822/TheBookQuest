@@ -203,4 +203,8 @@
       right: 0px;
     }
   }
+
+  .ratingChecked {
+    color: orange;
+  }
   

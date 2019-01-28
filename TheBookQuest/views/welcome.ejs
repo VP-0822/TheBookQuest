@@ -21,8 +21,8 @@
                             <span> By </span><span v-for="author in literature.authors">{{author}}, </span>
                         </span>
                         <h6 class="card-text mb-auto" style="margin-top:10px">{{literature.summary}}</h6>
-                        <button type="button" class="btn btn-primary" onclick="toggleElementVisibility('catalogue', 'singleItem')"><i
-                                class="fa fa-search"></i>
+                        <button type="button" class="btn btn-primary" v-on:click="selectLiterature(literature.literatureTypeId)">
+                            <i class="fa fa-search"></i>
                             Quick View</button>
                     </div>
                     <div class="col-md-6">
@@ -39,54 +39,74 @@
     <div id="singleItem" style="display : none">
         <div>
             <div class="row">
-                <div class="offset-md-1">
-                    <h3 class="modal-title" id="myModalLabel">History</h3>
+                <div class="col-md-3">
+                    <button type="button" class="btn btn-primary" v-on:click="backToList()">
+                    Back
+                    </button>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-3 offset-md-1 book-img">
-                    <img src="../assets/images/booksimage.jpg" class="img-responsive">
+                <div class="col-md-3  book-img">
+                    <img v-bind:src="'/assets/images/' + selectedLiterature.item.thumbnail" class="img-responsive">
                 </div>
                 <div class="col-md-4 product_content">
-                    <h4>Product Id: <span>51526</span></h4>
+                    <h3 class="modal-title" id="myModalLabel">{{selectedLiterature.item.title}}</h3>
+                    <div>
+                        <h5 class="badge badge-secondary" v-for="tag in selectedLiterature.item.tags" style="margin-right:5px">{{tag}}</h5>
+                    </div>
                     <div class="rating">
-                        <span class="glyphicon glyphicon-star"></span>
-                        <span class="glyphicon glyphicon-star"></span>
-                        <span class="glyphicon glyphicon-star"></span>
-                        <span class="glyphicon glyphicon-star"></span>
-                        <span class="glyphicon glyphicon-star"></span>
-                        (10 reviews)
+                        <span class="fa fa-star ratingChecked" v-for="n in selectedLiterature.avgRatingForStars"></span>
+                        <span class="fa fa-star" v-for="n in 10-selectedLiterature.avgRatingForStars"></span>
+                        <span> {{selectedLiterature.avgRating}}/10 </span>
                     </div>
-                    <p>A hardback (with its original hard cover slip-case & dust-jacket) copy of ‘The Times
-                        Complete History of the World’ by Richard Overy, which was published in 2011.</p>
-
-                    <div class="row">
-                        <div class="col-md-4 col-sm-6 col-xs-12">
-                            <select class="form-control" name="select">
-                                <option value="" selected="">rent</option>
-                                <option value="rate">rate</option>
-                            </select>
-                        </div>
-                        <!-- end col -->
-
-
-                        <div class="col-md-4 col-sm-12">
-                            <select class="form-control" name="select">
-                                <option value="" selected="">QTY</option>
-                                <option value="">1</option>
-                                <option value="">2</option>
-                                <option value="">3</option>
-                            </select>
-                        </div>
-                        <!-- end col -->
+                    <div>
+                        <span>{{selectedLiterature.noOfReviews}} reviews</span>
                     </div>
-                    <div class="space-ten"></div>
-                    <div class="btn-ground">
-                        <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-shopping-cart"></span>
-                            Add To Cart</button>
-                        <br />
-                        <button type="button" class="btn btn-primary"><span class="glyphicon glyphicon-heart"></span>
-                            Add To Wishlist</button>
+                    <div>
+                        <span>{{selectedLiterature.item.summary}}</span>
+                    </div>
+                    <div>
+                        <span style="font-weight: bold"> Written by : </span><span v-for="author in selectedLiterature.item.authors">{{author}},</span>
+                    </div>
+                    <div>
+                        <span style="font-weight: bold"> Published in : </span><span>{{selectedLiterature.item.year}}</span>
+                    </div>
+
+                    <div>
+                        <span style="font-weight: bold"> Published by : </span><span>{{selectedLiterature.item.publisher}}</span>
+                    </div>
+                    <div class="btn-ground" style="padding-top: 20px">
+                        <button type="button" class="btn btn-primary" v-if="selectedLiterature.litAvailable"><span class="glyphicon glyphicon-shopping-cart"></span>
+                            Issue</button>
+                        <button type="button" class="btn btn-secondary" v-if="!selectedLiterature.litAvailable" disabled><span class="glyphicon glyphicon-shopping-cart"></span>
+                            Issue</button>
+                            <span style="color: red" v-if="!selectedLiterature.litAvailable"> Not available</span>
+                            <span style="color: green" v-if="selectedLiterature.litAvailable"> {{selectedLiterature.availableBooks}} literature(s) available</span>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-top: 10px">
+                <div class="col-md-3 offset-sm-3">
+                    <h3> {{selectedLiterature.reviews.length}} Reviews </h3>
+                </div>
+            </div>
+            <div class="row" style="padding-top: 10px" v-for="review in selectedLiterature.reviews">
+                <div class="col-md-7 offset-sm-3">
+                    <div class="review-block">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="review-block-name" v-for="user in review.users">{{user.firstname}}&nbsp;{{user.lastname}}</div>
+                                <div class="review-block-date">{{review.reviewDate}}</div>
+                            </div>
+                            <div class="col-sm-9">
+                                <div class="rating">
+                                    <span class="fa fa-star ratingChecked" v-for="n in Math.round(review.rating)"></span>
+                                    <span class="fa fa-star" v-for="n in 10-Math.round(review.rating)"></span>
+                                    <span> {{review.rating}}/10 </span>
+                                </div>
+                                <div class="review-block-description">{{review.reviewComment}}</div>
+                            </div>
+                        </div>
+                        <hr/>
                     </div>
                 </div>
             </div>
@@ -115,7 +135,6 @@
     })
 
     function handleAjaxSuccess(ajaxData) {
-        console.log(ajaxData)
         app = new Vue({
             el: '#welcome',
             data: {
@@ -126,7 +145,17 @@
                     queryTypeList : ['all', 'title', 'author', 'publisher name', 'tags']
                 },
                 noResults: false,
-                literature : undefined
+                selectedLiterature : 
+                {
+                    item : '',
+                    avgRating : 0,
+                    avgRatingForStars : 0,
+                    noOfReviews : 0,
+                    litAvailable : false,
+                    availableBooks : 0,
+                    reviews : '',
+                    newComment: ''
+                }
             },
             methods : {
                 updateSearchResults : function(event) {
@@ -169,7 +198,6 @@
                 },
                 handleSearchSuccess : function(newData)
                 {
-                    console.log('search return')
                     var self = this
                     if(newData && newData.length > 0)
                     {
@@ -182,8 +210,89 @@
                         self.noResults = true
                     }
                 },
-                selectLiterature : function(event){
+                selectLiterature : function(literatureTypeId){
+                    var self = this
+                    self.literatureList.forEach(element => {
+                        if(element.literatureTypeId == literatureTypeId)
+                        {
+                            self.selectedLiterature = {
+                                item : element,
+                                avgRating : 0,
+                                avgRatingForStars : 0,
+                                noOfReviews : 0,
+                                litAvailable : false,
+                                availableBooks : 0,
+                                reviews : '',
+                                newComment: ''
+                            }
+
+                            $.ajax({
+                                url: 'http://localhost:3000/reviews/rating',
+                                beforeSend: function(request) {
+                                    request.setRequestHeader("search-query", "{\"literatureTypeId\" : \""+literatureTypeId +"\"}");
+                                },
+                                success: function (data) {
+                                    app.handleRatingsSuccess(data);
+                                },
+                                error: function () {
+                                    handleAjaxError()
+                                }
+                            });
+                        }
+                    });
+                    toggleElementVisibility('catalogue', 'singleItem')
+                },
+                handleRatingsSuccess : function (data){
+                    var self = this
+                    if(data.avgRating[0])
+                    {
+                        self.selectedLiterature.avgRating = data.avgRating[0].average.toFixed(1),
+                        self.selectedLiterature.avgRatingForStars = Math.round(data.avgRating[0].average)
+                    }
+                    self.selectedLiterature.noOfReviews = data.count
+
+                    $.ajax({
+                        url: 'http://localhost:3000/literature/available',
+                        beforeSend: function(request) {
+                            request.setRequestHeader("search-query", "{\"literatureTypeId\" : \""+self.selectedLiterature.item.literatureTypeId +"\"}");
+                        },
+                        success: function (data) {
+                            app.handleLiteratureAvailableSuccess(data);
+                        },
+                        error: function () {
+                            handleAjaxError()
+                        }
+                    });
+                },
+                handleLiteratureAvailableSuccess : function(availableCount){
+                    var self = this
+                    if(availableCount.count > 0)
+                    {
+                        self.selectedLiterature.availableBooks = availableCount.count;
+                        self.selectedLiterature.litAvailable = true
+                    }
+
+                    $.ajax({
+                        url: 'http://localhost:3000/reviews/literature/' + self.selectedLiterature.item.literatureTypeId,
+                        success: function (data) {
+                            app.handleReviewsSuccess(data);
+                        },
+                        error: function () {
+                            handleAjaxError()
+                        }
+                    });
+
+                },
+                handleReviewsSuccess : function(reviews){
+                    console.log('handleReviewsSuccess')
+                    console.log(reviews)
+                    var self = this;
+                    self.selectedLiterature.reviews = reviews
+                },
+                backToList : function(){
+                    var self = this;
                     
+                    toggleElementVisibility('singleItem', 'catalogue')
                 }
             },
             mounted: function () {

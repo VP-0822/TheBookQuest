@@ -85,7 +85,7 @@ exports.register=function(req, res){
 exports.getUserProfile = function(req, res, userId, handleSuccessResponse, handleErrorResponse){
     if(userId)
     {
-        User.find({userId : userId}).lean().exec(function(err, result){
+        User.find({userId : userId}, { password: 0}).lean().exec(function(err, result){
             if(err)
             {
                 handleErrorResponse(req, res, err)

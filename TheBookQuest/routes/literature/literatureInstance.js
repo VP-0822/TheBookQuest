@@ -35,6 +35,17 @@ router.post('/return', authValidator.authValidator(), function(req, res){
     }
 })
 
+router.get('/available', authValidator.authValidator(), function(req, res){
+    let searchQuery = req.get('search-query');
+    if(searchQuery)
+    {
+        let searchJSON = JSON.parse(searchQuery);
+        literatureIssue.returnAvailableBookCount(req, res, searchJSON, handleSuccessResponse, handleErrorResponse)
+        return;
+    }
+    handleErrorResponse(req, res, new Error('Unable to fetch available literatures'))
+})
+
 function handleSuccessResponse(req, res, responseData, displayMessage)
 {
     if(displayMessage)

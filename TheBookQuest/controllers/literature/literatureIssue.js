@@ -32,7 +32,9 @@ exports.issueLiteratureById = function(req, res, query, handleSuccessResponse, h
                 return
             })
         });
+        return
     }
+    handleErrorResponse(req, res, new Error('Invalid data provided'))
 }
 
 exports.returnLiterature = function(req, res, query, handleSuccessResponse, handleErrorResponse){
@@ -56,7 +58,26 @@ exports.returnLiterature = function(req, res, query, handleSuccessResponse, hand
             handleSuccessResponse(req, res, literatureInstance, 'Book returned successfully')
             return
         })
+        return
     }
+    handleErrorResponse(req, res, new Error('Invalid literature id provided'))
+}
+
+exports.returnAvailableBookCount = function(req, res, query, handleSuccessResponse, handleErrorResponse){
+    if(query)
+    {
+        let literatureTypeId = query.literatureTypeId;
+        Literature.find({ $and: [{status: 'available'}, {literatureTypeId : literatureTypeId}]}).count(function(err, result){
+            if(err){
+                handleErrorResponse(req, res, err)
+                return
+            }
+            handleSuccessResponse(req, res, {count: result})
+            return
+        })
+        return
+    }
+    handleErrorResponse(req, res, new Error('Invalid literature type id provided'))
 }
 
 exports.getUserIssues = function(req, res, userId, handleSuccessResponse, handleErrorResponse){
