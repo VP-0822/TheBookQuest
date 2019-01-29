@@ -58,7 +58,7 @@ exports.addReviewForLiterature = function(req, res, reviewDetails, handleSuccess
             return
         }
 
-        handleSuccessResponse(req, res, reviewInstance, 'Comment added successfully')
+        handleSuccessResponse(req, res, reviewInstance)
     })
 }
 
