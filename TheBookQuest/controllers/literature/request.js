@@ -22,11 +22,12 @@ exports.addLiteratureRequest = function(req, res, requestDetails, handleSuccessR
     newRequest.save(function(err, docs){
         if(err)
         {
+            console.log(err)
             handleErrorResponse(req, res, err)
             return
         }
 
-        handleSuccessResponse(req, res, docs, 'Request added successfully')
+        handleSuccessResponse(req, res, docs)
     })
 
 }

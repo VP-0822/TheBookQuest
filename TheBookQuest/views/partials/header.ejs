@@ -8,8 +8,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/css/common.css">
     <script src="/js/common.js"></script>
+    <link type="text/css" rel="stylesheet" href="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.css"/>
     <% if (locals.user) { %>
         <script src="https://cdn.jsdelivr.net/npm/vue@2.5.22/dist/vue.js"></script>
+        <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+        <script src="https://unpkg.com/vuejs-datepicker@1.5.4/dist/vuejs-datepicker.min.js"></script>
     <% } %>
 </head>
 
@@ -24,14 +27,14 @@
             <% if (locals.user) { %>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    <li class="nav-item" id="home">
+                        <a class="nav-link" href="/welcome" id="homeAnchor">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Request</a>
+                    <li class="nav-item" id="request">
+                        <a class="nav-link" href="/request" id="requestAnchor">Request</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contact Us</a>
+                    <li class="nav-item" id="contactUs">
+                        <a class="nav-link" href="#" id="contactUsAnchor">Contact Us</a>
                     </li>
                 </ul>
                 <ul class="nav-item dropdown">
@@ -52,5 +55,4 @@
             </div>
             <% } %>
         </nav>
-
         <% include message %>

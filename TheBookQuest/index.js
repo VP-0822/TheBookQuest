@@ -93,8 +93,8 @@ let user = require('./routes/user');
 app.use('/user', user);
 
 //define routes for welcome page
-let welcomePage = require('./routes/home');
-app.use('/', welcomePage);
+let menuPage = require('./routes/menu');
+app.use('/', menuPage);
 
 //start server
 app.listen(3000, function(){

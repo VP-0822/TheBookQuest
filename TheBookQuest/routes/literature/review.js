@@ -17,9 +17,7 @@ router.post('/add', authValidator.authValidator(), function(req, res){
     let reviewDetails = req.body
     if(reviewDetails)
     {
-        console.log(res.locals.user)
         reviewDetails.userId = res.locals.user.userId
-        console.log(reviewDetails)
         review.addReviewForLiterature(req, res, reviewDetails, handleSuccessResponse, handleErrorResponse)
         return;
     }

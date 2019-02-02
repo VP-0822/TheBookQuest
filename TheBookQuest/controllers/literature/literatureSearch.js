@@ -126,3 +126,18 @@ exports.searchLiteratureInstanceById = function(req, res, searchQuery, handleSuc
     }
     handleErrorResponse(req, res, new Error('Invalid literature id provided.'))
 }
+
+exports.searchLiteratureAvailableInstances = function(req, res, searchQuery, handleSuccessResponse, handleErrorResponse){
+    if(searchQuery){
+        Literature.find({$and: [{"literatureTypeId" : searchQuery}, {"status" : "available"}]}).lean().exec(function(err, docs){
+            if(err)
+            {
+                handleErrorResponse(req, res, err)
+                return
+            }
+            handleSuccessResponse(req, res, docs)
+        });
+        return
+    }
+    handleErrorResponse(req, res, new Error('Invalid literature type id provided.'))
+}

@@ -8,11 +8,11 @@ exports.issueLiteratureById = function(req, res, query, handleSuccessResponse, h
         let literatureId = query.issue.literatureId;
         let userId = query.issue.userId;
         let newIssue = new Issue({
-            issueId : randomstring.generate(7),
+            issueId : randomstring.generate(10),
             literatureId : literatureId,
             userId : userId,
-            issueDate : new Date(),
-            returnDate : new Date('2019-01-30T00:30:00')
+            issueDate : query.issue.startDate,
+            returnDate : query.issue.returnDate
         });
         newIssue.save(function(err, issue){
             if(err){
@@ -28,7 +28,7 @@ exports.issueLiteratureById = function(req, res, query, handleSuccessResponse, h
                     handleErrorResponse(req, res, err)
                     return
                 }
-                handleSuccessResponse(req, res, literatureInstance, 'Successfully issued book!')
+                handleSuccessResponse(req, res, literatureInstance)
                 return
             })
         });

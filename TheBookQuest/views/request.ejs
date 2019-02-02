@@ -1,0 +1,107 @@
+<% include partials/header %>
+<div style="background-color:dimgray" id="requestDiv" v-cloak>
+    <div class="row" style="height: 20px;"></div>
+    <div class="row">
+        <div class="col-sm-6 offset-sm-3 align-middle" style="height:90%">
+                <div class="col-sm-8 offset-sm-2" v-if="messageArray.length > 0">
+                        <div v-for="message in messageArray">
+                            <div class="alert alert-success alert-dismissible" v-if="message.isSuccess" id="success-alert">
+                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                <strong>Success!</strong> {{message.message}}
+                            </div>
+                            <div class="alert alert-danger alert-dismissible" v-if="message.isError" id="error-alert">
+                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                <strong>Error!</strong> {{message.message}}
+                            </div>
+                        </div>
+                    </div>
+            <div class="row card shadow-sm" style="height:90%">
+                <div class="col-sm-8 offset-sm-2" style="margin-top: 10px">
+                    <form>
+                        <h3>Submit New Literature Request </h3>
+                        <div class="form-group required">
+                            <label for="litTitle" class="control-label">Literature title</label>
+                            <input type="text" class="form-control" id="litTitle" placeholder="Enter literature title"
+                                required="true" v-model="request.title">
+                        </div>
+                        <div class="form-group">
+                            <label for="isbn">ISBN</label>
+                            <input type="text" class="form-control" id="isbn" aria-describedby="isbnHelp" placeholder="Enter ISBN" v-model="request.isbn">
+                            <small id="isbnHelp" class="form-text text-muted">Provide valid ISBN number</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="issn">ISSN</label>
+                            <input type="text" class="form-control" id="issn" aria-describedby="issnHelp" placeholder="Enter ISSN" v-model="request.issn">
+                            <small id="issnHelp" class="form-text text-muted">Provide valid ISSN number</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="comment">Comment</label>
+                            <input type="text" class="form-control" id="comment" aria-describedby="commentHelp"
+                                placeholder="Enter comment" v-model="request.comment">
+                            <small id="commentHelp" class="form-text text-muted">Provide additional comment (For e.g.
+                                Author name, Year etc.)</small>
+                        </div>
+                        <button type="button" class="btn btn-primary" v-on:click="submitRequest">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+app = new Vue({
+            el: '#requestDiv',
+            data: {
+                messageArray : [],
+                request : {
+                    title : '',
+                    isbn : '',
+                    issn : '',
+                    comment:''
+                }
+            },
+            methods: {
+                submitRequest : function(){
+                    var self = this;
+                    $.ajax({
+                        url: 'http://localhost:3000/requests/add',
+                        type: "post",
+                        data: {literatureTitle: self.request.title, isbn: self.request.isbn || '', issn: self.request.issn || '', comment: self.request.comment || ''},
+                        success: function (data) {
+                            app.handleRequestSuccess(data);
+                        },
+                        error: function (err) {
+                            app.handleVueError(err);
+                        }
+                    });
+                },
+                handleVueError: function(err){
+                    app.showErrorMessage(err.message);
+                },
+                handleRequestSuccess : function(data){
+                    var self = this;
+                    app.showSuccessMessage('New literature request added successfully!');
+                    self.request = {};
+                    console.log('success');
+                },
+                showSuccessMessage: function(message) {
+                    var self = this
+                    self.messageArray.push({isSuccess: true, isError: false, message: message});
+                    setTimeout(function(){
+                        $("#success-alert").slideUp(500);
+                        self.messageArray = {}
+                    }, 5000);
+                },
+                showErrorMessage: function(message) {
+                    var self =this;
+                    self.messageArray.push({isSuccess: false, isError: true, message: message});
+                    setTimeout(function(){
+                        $("#error-alert").slideUp(500);
+                        self.messageArray = {}
+                    }, 5000);
+                },
+            }
+        })
+</script>
+<% include partials/footer %>

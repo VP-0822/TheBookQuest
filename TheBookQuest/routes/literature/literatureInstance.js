@@ -9,10 +9,16 @@ router.get('/instance/:litId', authValidator.authValidator(), function(req, res)
     return;
 });
 
+router.get('/instances/:litTypeId', authValidator.authValidator(), function(req, res){
+    literatureSearch.searchLiteratureAvailableInstances(req, res, req.params.litTypeId, handleSuccessResponse, handleErrorResponse);
+    return;
+});
+
 router.post('/issue', authValidator.authValidator(),  function(req, res){
     let issueQuery = req.body;
     if(issueQuery)
     {
+        issueQuery.issue.userId = res.locals.user.userId
         literatureIssue.issueLiteratureById(req, res, issueQuery, handleSuccessResponse, handleErrorResponse);
         return;
     }

@@ -1,19 +1,34 @@
 <% include partials/header %>
-<div id="welcome">
-    <div class="row searchFilter" style="margin-top: 10px">
+<div id="welcome" style="background-color:dimgray;min-height: 90%;" v-cloak>
+    <div class="row" style="height: 20px;"></div>
+    <div class="row searchFilter">
         <div class="col-sm-8 offset-sm-2">
             <div class="input-group">
                 <input id="table_filter" type="text" class="form-control" placeholder="Search" v-model="searchSelection.query">
                 <select v-model="searchSelection.queryType">
                     <option v-for="queryType in searchSelection.queryTypeList" :value="queryType">{{queryType}}</option>
                 </select>
-                <button id="searchBtn" type="button" class="btn btn-secondary btn-search" v-on:click="updateSearchResults"><span class="label-icon">Search</span></button>
+                <button id="searchBtn" type="button" class="btn btn-secondary btn-search" v-on:click="updateSearchResults"><span
+                        class="label-icon">Search</span></button>
             </div>
         </div>
     </div>
+    <div v-if="messageArray.length > 0">
+        <div v-for="message in messageArray" class="col-sm-4 offset-sm-4">
+            <div class="alert alert-success alert-dismissible" v-if="message.isSuccess" id="success-alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Success!</strong> {{message.message}}
+            </div>
+            <div class="alert alert-danger alert-dismissible" v-if="message.isError" id="error-alert">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Error!</strong> {{message.message}}
+            </div>
+        </div>
+    </div>
+
     <div id="catalogue">
-        <div class="row">
-            <div class="col-md-4" v-for="(literature, index) in literatureList">
+        <div class="row" style="padding-left: 10px; padding-right: 10px;">
+            <div class="col-md-4" v-for="(literature, index) in visibileLiteratureList">
                 <div class="card flex-md-row mb-4 shadow-sm h-md-250">
                     <div class="col-md-6 card-body d-flex flex-column align-items-start">
                         <strong class="d-inline-block mb-2 text-primary">{{ literature.title }}</strong>
@@ -25,29 +40,37 @@
                             <i class="fa fa-search"></i>
                             Quick View</button>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6" style="padding-right: 0px; padding-left: 0px;">
                         <img class="card-img-right flex-auto d-none d-lg-block" alt="Thumbnail [200x250]" v-bind:src="'/assets/images/' + literature.thumbnail"
-                            style="width: 200px; height: 250px;">
+                        style="width: 205;height: 270;">
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 offset-md-3" v-if="noResults"> 
+            <div class="col-md-6 offset-md-3" v-if="noResults">
                 <h1> No results found! Please modify search criteria. </h1>
             </div>
         </div>
+        <div style="margin-left: 35%">
+            <b-pagination size="md" :total-rows="literatureList.length" v-model="currentPage" :per-page="pageSize"
+                prev-text="Previous" next-text="Next" @input="selectPage">
+            </b-pagination>
+        </div>
+        <div class="row" style="height: 10px;"></div>
     </div>
+    
     <div id="singleItem" style="display : none">
-        <div>
-            <div class="row">
-                <div class="col-md-3">
+            <div class="row" style="padding-left: 10px; padding-right: 10px;margin-left: 0px;margin-right: 0px;">
+        <div class="col-sm-8 offset-sm-2 card shadow-sm">
+            <div class="row" style="margin-top:10px">
+                <div class="col-md-2">
                     <button type="button" class="btn btn-primary" v-on:click="backToList()">
-                    Back
+                        Back
                     </button>
                 </div>
-                <div class="col-md-3  book-img">
+                <div class="col-md-4  book-img">
                     <img v-bind:src="'/assets/images/' + selectedLiterature.item.thumbnail" class="img-responsive">
                 </div>
-                <div class="col-md-4 product_content">
+                <div class="col-md-5 product_content">
                     <h3 class="modal-title" id="myModalLabel">{{selectedLiterature.item.title}}</h3>
                     <div>
                         <h5 class="badge badge-secondary" v-for="tag in selectedLiterature.item.tags" style="margin-right:5px">{{tag}}</h5>
@@ -58,7 +81,7 @@
                         <span> {{selectedLiterature.avgRating}}/10 </span>
                     </div>
                     <div>
-                        <span>{{selectedLiterature.noOfReviews}} reviews</span>
+                        <a href="#reviews"><span>{{selectedLiterature.noOfReviews}} reviews</span></a>
                     </div>
                     <div>
                         <span>{{selectedLiterature.item.summary}}</span>
@@ -74,17 +97,42 @@
                         <span style="font-weight: bold"> Published by : </span><span>{{selectedLiterature.item.publisher}}</span>
                     </div>
                     <div class="btn-ground" style="padding-top: 20px">
-                        <button type="button" class="btn btn-primary" v-if="selectedLiterature.litAvailable"><span class="glyphicon glyphicon-shopping-cart"></span>
+                        <button type="button" class="btn btn-primary" v-if="selectedLiterature.litAvailable"
+                            data-toggle="modal" data-target="#issueModal"><span class="glyphicon glyphicon-shopping-cart"></span>
                             Issue</button>
-                        <button type="button" class="btn btn-secondary" v-if="!selectedLiterature.litAvailable" disabled><span class="glyphicon glyphicon-shopping-cart"></span>
+                        <button type="button" class="btn btn-secondary" v-if="!selectedLiterature.litAvailable"
+                            disabled><span class="glyphicon glyphicon-shopping-cart"></span>
                             Issue</button>
-                            <span style="color: red" v-if="!selectedLiterature.litAvailable"> Not available</span>
-                            <span style="color: green" v-if="selectedLiterature.litAvailable"> {{selectedLiterature.availableBooks}} literature(s) available</span>
-                        <br/>
+                        <span style="color: red" v-if="!selectedLiterature.litAvailable"> Not available</span>
+                        <span style="color: green" v-if="selectedLiterature.litAvailable">
+                            {{selectedLiterature.availableBooks}} literature(s) available</span>
+                        <br />
                     </div>
                 </div>
             </div>
-            <div class="row" style="padding-top: 10px">
+            <!-- Modal -->
+            <div class="modal fade" id="issueModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Issue Literature</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <vuejs-datepicker v-model="selectedLiterature.issue.startDate" name="startDate" placeholder="Select start date" :calendar-button=true calendar-button-icon="fa fa-calendar" :bootstrap-styling=true format="dd/MM/yyyy" :disabled-dates="selectedLiterature.issue.disabledStartDate" @input="updateStartDate" ></vuejs-datepicker>
+                            <vuejs-datepicker v-model="selectedLiterature.issue.returnDate" name="returnDate" placeholder="Select return date" :calendar-button=true calendar-button-icon="fa fa-calendar" :bootstrap-styling=true format="dd/MM/yyyy" :disabled-dates="selectedLiterature.issue.disabledReturnDate" @input="updateReturnDate"></vuejs-datepicker>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" v-on:click="closeIssueModal">Close</button>
+                            <button type="button" class="btn btn-primary" v-on:click="submitIssue">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="padding-top: 10px" id="reviews">
                 <div class="col-md-3 offset-sm-3">
                     <h3> {{selectedLiterature.reviews.length}} Reviews </h3>
                 </div>
@@ -106,7 +154,7 @@
                                 <div class="review-block-description">{{review.reviewComment}}</div>
                             </div>
                         </div>
-                        <hr/>
+                        <hr />
                     </div>
                 </div>
             </div>
@@ -114,101 +162,104 @@
                 <div class="col-md-7 offset-sm-3">
                     <div class="review-block">
                         <div class="form-group">
-                            <label for="exampleFormControlTextarea3" style="font-weight: bold" >Write review</label>
+                            <label for="exampleFormControlTextarea3" style="font-weight: bold">Write review</label>
                             <textarea class="form-control" id="exampleFormControlTextarea3" rows="4" v-model="selectedLiterature.newComment"></textarea>
                         </div>
                     </div>
                     <form class="rating">
-                            <label>
-                              <input type="radio" name="stars" value="1" v-on:click="captureRating"/>
-                              <span class="icon">★</span>
-                            </label>
-                            <label>
-                              <input type="radio" name="stars" value="2" v-on:click="captureRating"/>
-                              <span class="icon">★</span>
-                              <span class="icon">★</span>
-                            </label>
-                            <label>
-                              <input type="radio" name="stars" value="3" v-on:click="captureRating"/>
-                              <span class="icon">★</span>
-                              <span class="icon">★</span>
-                              <span class="icon">★</span>   
-                            </label>
-                            <label>
-                              <input type="radio" name="stars" value="4" v-on:click="captureRating"/>
-                              <span class="icon">★</span>
-                              <span class="icon">★</span>
-                              <span class="icon">★</span>
-                              <span class="icon">★</span>
-                            </label>
-                            <label>
-                              <input type="radio" name="stars" value="5" v-on:click="captureRating"/>
-                              <span class="icon">★</span>
-                              <span class="icon">★</span>
-                              <span class="icon">★</span>
-                              <span class="icon">★</span>
-                              <span class="icon">★</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="stars" value="6" v-on:click="captureRating"/>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="stars" value="7" v-on:click="captureRating"/>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="stars" value="8" v-on:click="captureRating"/>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="stars" value="9" v-on:click="captureRating"/>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                            </label>
-                            <label>
-                                <input type="radio" name="stars" value="10" v-on:click="captureRating"/>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                                <span class="icon">★</span>
-                            </label>
-                          </form>
+                        <label>
+                            <input type="radio" name="stars" value="1" v-on:click="captureRating" />
+                            <span class="icon">★</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="stars" value="2" v-on:click="captureRating" />
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="stars" value="3" v-on:click="captureRating" />
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="stars" value="4" v-on:click="captureRating" />
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="stars" value="5" v-on:click="captureRating" />
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="stars" value="6" v-on:click="captureRating" />
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="stars" value="7" v-on:click="captureRating" />
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="stars" value="8" v-on:click="captureRating" />
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="stars" value="9" v-on:click="captureRating" />
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="stars" value="10" v-on:click="captureRating" />
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                            <span class="icon">★</span>
+                        </label>
+                    </form>
                     <button type="button" class="btn btn-primary" style="position: absolute; right: 10px;" v-on:click="submitReview()">Submit</button>
                 </div>
             </div>
+            
         </div>
+        </div>
+        <div class="row" style="height: 10px;"></div>
     </div>
 </div>
 <div id="welcomeError" style="display: none">
@@ -218,9 +269,15 @@
         </div>
     </div>
 </div>
+<div id="issueDiv">
+</div>
 <script>
     var app;
     $(document).ready(function () {
+        fetchLiteratures();
+    })
+
+    function fetchLiteratures() {
         $.ajax({
             url: "http://localhost:3000/literatures",
             success: function (data) {
@@ -230,149 +287,190 @@
                 handleAjaxError()
             }
         });
-    })
+    }
 
     function handleAjaxSuccess(ajaxData) {
         app = new Vue({
             el: '#welcome',
+            components: {
+                vPagination: window['vue-plain-pagination'],
+                vuejsDatepicker
+            },
             data: {
                 literatureList: ajaxData,
+                messageArray : [],
+                visibileLiteratureList: [],
                 searchSelection: {
                     query: '',
                     queryType: 'all',
-                    queryTypeList : ['all', 'title', 'author', 'publisher name', 'tags']
+                    queryTypeList: ['all', 'title', 'author', 'publisher name', 'tags']
                 },
                 noResults: false,
-                selectedLiterature : 
+                selectedLiterature:
                 {
-                    item : '',
-                    avgRating : 0,
-                    avgRatingForStars : 0,
-                    noOfReviews : 0,
-                    litAvailable : false,
-                    availableBooks : 0,
-                    reviews : '',
+                    item: '',
+                    avgRating: 0,
+                    avgRatingForStars: 0,
+                    noOfReviews: 0,
+                    litAvailable: false,
+                    availableBooks: 0,
+                    reviews: '',
                     newComment: '',
-                    newCommentRating : 0
+                    newCommentRating: 0,
+                    issue: {
+
+                    }
+                },
+                currentPage: 1,
+                totalPageCount: 0,
+                pageSize: 9,
+                noOfPages: 0,
+                bootstrapPaginationClasses: {
+                    ul: 'pagination',
+                    li: 'page-item',
+                    liActive: 'active',
+                    liDisable: 'disabled',
+                    button: 'btn btn-primary'
+                },
+                customLabels: {
+                    first: false,
+                    prev: 'Previous',
+                    next: 'Next',
+                    last: false
                 }
+
             },
-            methods : {
-                updateSearchResults : function(event) {
+            beforeMount: function () {
+                var self = this;
+                self.noOfPages = Math.ceil(self.literatureList.length / self.pageSize);
+                self.totalPageCount = self.noOfPages;
+                self.updateVisibleLiteratureList();
+            },
+            methods: {
+                updateSearchResults: function (event) {
                     var self = this
+                    if (!self.searchSelection.query || self.searchSelection.query == '') {
+                        fetchLiteratures();
+                        return;
+                    }
+
                     var ajaxUrl = 'http://localhost:3000/literatures'
-                    if(self.searchSelection.queryType == 'all')
-                    {
+                    if (self.searchSelection.queryType == 'all') {
                         ajaxUrl = 'http://localhost:3000/literatures/search'
                     }
-                    else if(self.searchSelection.queryType == 'title')
-                    {
+                    else if (self.searchSelection.queryType == 'title') {
                         ajaxUrl = 'http://localhost:3000/literatures/searchtitle'
                     }
-                    else if(self.searchSelection.queryType == 'author')
-                    {
+                    else if (self.searchSelection.queryType == 'author') {
                         ajaxUrl = 'http://localhost:3000/literatures/searchauthor'
                     }
-                    else if(self.searchSelection.queryType == 'publisher name')
-                    {
+                    else if (self.searchSelection.queryType == 'publisher name') {
                         ajaxUrl = 'http://localhost:3000/literatures/searchpublishers'
                     }
-                    else if(self.searchSelection.queryType == 'tags')
-                    {
+                    else if (self.searchSelection.queryType == 'tags') {
                         ajaxUrl = 'http://localhost:3000/literatures/searchtags'
                     }
 
                     $.ajax({
                         url: ajaxUrl,
-                        beforeSend: function(request) {
-                            request.setRequestHeader("search-query", "{\"query\" : \""+self.searchSelection.query +"\"}");
+                        beforeSend: function (request) {
+                            request.setRequestHeader("search-query", "{\"query\" : \"" + self.searchSelection.query + "\"}");
                         },
                         success: function (data) {
                             app.handleSearchSuccess(data);
                         },
-                        error: function () {
-                            handleAjaxError()
+                        error: function (err) {
+                            app.handleVueError(err);
                         }
                     });
 
                 },
-                handleSearchSuccess : function(newData)
-                {
+                handleSearchSuccess: function (newData) {
                     var self = this
-                    if(newData && newData.length > 0)
-                    {
+                    if (newData && newData.length > 0) {
                         self.noResults = false
-                        self.literatureList = newData
+                        self.literatureList = newData;
+                        app.updateVisibleLiteratureList();
                     }
-                    else
-                    {
+                    else {
                         self.literatureList = newData
+                        app.updateVisibleLiteratureList();
                         self.noResults = true
                     }
                 },
-                selectLiterature : function(literatureTypeId, avoidToggleVisibility){
+                selectLiterature: function (literatureTypeId, avoidToggleVisibility) {
                     var self = this
                     self.literatureList.forEach(element => {
-                        if(element.literatureTypeId == literatureTypeId)
-                        {
+                        if (element.literatureTypeId == literatureTypeId) {
                             self.selectedLiterature = {
-                                item : element,
-                                avgRating : 0,
-                                avgRatingForStars : 0,
-                                noOfReviews : 0,
-                                litAvailable : false,
-                                availableBooks : 0,
-                                reviews : '',
+                                item: element,
+                                avgRating: 0,
+                                avgRatingForStars: 0,
+                                noOfReviews: 0,
+                                litAvailable: false,
+                                availableBooks: 0,
+                                reviews: '',
                                 newComment: '',
-                                newCommentRating : 0
+                                newCommentRating: 0,
+                                issue: {
+
+                                }
                             }
 
                             $.ajax({
                                 url: 'http://localhost:3000/reviews/rating',
-                                beforeSend: function(request) {
-                                    request.setRequestHeader("search-query", "{\"literatureTypeId\" : \""+literatureTypeId +"\"}");
+                                beforeSend: function (request) {
+                                    request.setRequestHeader("search-query", "{\"literatureTypeId\" : \"" + literatureTypeId + "\"}");
                                 },
                                 success: function (data) {
                                     app.handleRatingsSuccess(data);
                                 },
-                                error: function () {
-                                    handleAjaxError()
+                                error: function (err) {
+                                    app.handleVueError(err);
                                 }
                             });
                         }
                     });
-                    if(!avoidToggleVisibility)
-                    {
+                    if (!avoidToggleVisibility) {
                         toggleElementVisibility('catalogue', 'singleItem')
                     }
                 },
-                handleRatingsSuccess : function (data){
+                handleRatingsSuccess: function (data) {
                     var self = this
-                    if(data.avgRating[0])
-                    {
+                    if (data.avgRating[0]) {
                         self.selectedLiterature.avgRating = data.avgRating[0].average.toFixed(1),
-                        self.selectedLiterature.avgRatingForStars = Math.round(data.avgRating[0].average)
+                            self.selectedLiterature.avgRatingForStars = Math.round(data.avgRating[0].average)
                     }
                     self.selectedLiterature.noOfReviews = data.count
 
                     $.ajax({
                         url: 'http://localhost:3000/literature/available',
-                        beforeSend: function(request) {
-                            request.setRequestHeader("search-query", "{\"literatureTypeId\" : \""+self.selectedLiterature.item.literatureTypeId +"\"}");
+                        beforeSend: function (request) {
+                            request.setRequestHeader("search-query", "{\"literatureTypeId\" : \"" + self.selectedLiterature.item.literatureTypeId + "\"}");
                         },
                         success: function (data) {
                             app.handleLiteratureAvailableSuccess(data);
                         },
-                        error: function () {
-                            handleAjaxError()
+                        error: function (err) {
+                            app.handleVueError(err);
                         }
                     });
                 },
-                handleLiteratureAvailableSuccess : function(availableCount){
+                handleLiteratureAvailableSuccess: function (availableCount) {
                     var self = this
-                    if(availableCount.count > 0)
-                    {
+                    if (availableCount.count > 0) {
                         self.selectedLiterature.availableBooks = availableCount.count;
-                        self.selectedLiterature.litAvailable = true
+                        self.selectedLiterature.litAvailable = true;
+                        self.selectedLiterature.issue.startDate;
+                        self.selectedLiterature.issue.returnDate;
+                        var date = new Date();
+                        date.setDate(date.getDate() - 1);
+                        self.selectedLiterature.issue.disabledStartDate = {
+                            to: date
+                        }
+                        self.selectedLiterature.issue.disabledReturnDate = {
+                            to: date
+                        }
                     }
 
                     $.ajax({
@@ -380,51 +478,152 @@
                         success: function (data) {
                             app.handleReviewsSuccess(data);
                         },
-                        error: function () {
-                            handleAjaxError()
+                        error: function (err) {
+                            app.handleVueError(err);
                         }
                     });
 
                 },
-                handleReviewsSuccess : function(reviews){
+                handleReviewsSuccess: function (reviews) {
                     var self = this;
                     self.selectedLiterature.reviews = reviews
                 },
-                backToList : function(){
+                backToList: function () {
                     var self = this;
                     toggleElementVisibility('singleItem', 'catalogue')
                 },
-                submitReview : function(){
+                submitReview: function () {
                     var self = this;
                     $.ajax({
                         url: 'http://localhost:3000/reviews/add',
                         type: "post",
-                        data: {literatureTypeId : self.selectedLiterature.item.literatureTypeId, comment : self.selectedLiterature.newComment, rating : self.selectedLiterature.newCommentRating},
+                        data: { literatureTypeId: self.selectedLiterature.item.literatureTypeId, comment: self.selectedLiterature.newComment, rating: self.selectedLiterature.newCommentRating },
                         success: function (data) {
                             app.submitAndUpdateReview(data)
                         },
-                        error: function () {
-                            handleAjaxError()
+                        error: function (err) {
+                            app.handleVueError(err);
                         }
                     });
                 },
-                captureRating : function(event){
+                captureRating: function (event) {
                     var self = this;
                     self.selectedLiterature.newCommentRating = event.srcElement.attributes.value.value;
                 },
-                submitAndUpdateReview : function(data){
+                submitAndUpdateReview: function (data) {
                     var self = this;
                     var literatureTypeId = self.selectedLiterature.item.literatureTypeId
                     app.selectLiterature(literatureTypeId, true);
                     $(':radio').prop('checked', false);
+                },
+                updateVisibleLiteratureList: function () {
+                    var self = this;
+                    self.visibileLiteratureList = self.literatureList.slice((self.currentPage - 1) * self.pageSize, ((self.currentPage - 1) * self.pageSize) + self.pageSize);
+
+                    self.noOfPages = Math.ceil(self.literatureList.length / self.pageSize);
+
+                    //if we have 0 visible literatures, go back a page
+                    if (self.visibileLiteratureList.length == 0 && self.currentPage > 0) {
+                        app.updatePage(self.currentPage - 1);
+                    }
+                },
+                updatePage: function (pageNumber) {
+                    var self = this;
+                    self.currentPage = pageNumber;
+                    app.updateVisibleLiteratureList();
+                },
+                selectPage: function (page) {
+                    var self = this;
+                    self.currentPage = page;
+                    app.updateVisibleLiteratureList();
+                },
+                updateStartDate : function(startDate) {
+                    var self = this;
+                    self.selectedLiterature.issue.startDate = startDate;
+                    self.selectedLiterature.issue.disabledReturnDate.to = startDate;
+                    if(!self.selectedLiterature.issue.returnDate || self.selectedLiterature.issue.returnDate.getTime() < startDate.getTime()){
+                        self.selectedLiterature.issue.returnDate = startDate;
+                    }
+                },
+                updateReturnDate : function(returnDate) {
+                    var self = this;
+                    self.selectedLiterature.issue.returnDate = returnDate;
+                },
+                closeIssueModal : function(){
+                    var self = this;
+                    self.selectedLiterature.issue = {};
+                },
+                submitIssue : function(){
+                    var self = this
+                    var literatureTypeId = self.selectedLiterature.item.literatureTypeId
+                    var instancesUrl = 'http://localhost:3000/literature/instances/' + literatureTypeId
+                    $.ajax({
+                        url: instancesUrl,
+                        success: function (data) {
+                            app.handleSearchLitreatureInstancesSuccess(data);
+                        },
+                        error: function (err) {
+                            app.handleVueError(err);
+                        }
+                    });
+                    
+                },
+                handleSearchLitreatureInstancesSuccess : function(instances){
+                    var self = this;
+                    var litInstanceId = '';
+                    if(!instances && instances.length == 0)
+                    {
+                        app.handleVueError(new Error('No literatures are available for issue. Please try again!'));
+                    }
+                    else
+                    {
+                        litInstanceId = instances[0].literatureId; 
+                    }
+                    $.ajax({
+                        url: 'http://localhost:3000/literature/issue',
+                        type: "post",
+                        data: { issue : {literatureId : litInstanceId, startDate : self.selectedLiterature.issue.startDate, returnDate: self.selectedLiterature.issue.returnDate}},
+                        success: function (data) {
+                            app.handleIssueSuccess(data);
+                        },
+                        error: function (err) {
+                            app.handleVueError(err);
+                        }
+                    });
+                },
+                handleIssueSuccess : function(literatureInstance){
+                    var self = this
+                    app.selectLiterature(self.selectedLiterature.item.literatureTypeId, true);
+                    $('#issueModal').modal('hide');
+                    app.closeIssueModal(); 
+                    app.showSuccessMessage('Literature issued successfully!'); 
+                },
+                showSuccessMessage: function(message) {
+                    var self = this
+                    self.messageArray.push({isSuccess: true, isError: false, message: message});
+                    setTimeout(function(){
+                        $("#success-alert").slideUp(500);
+                        self.messageArray = {}
+                    }, 5000);
+                },
+                showErrorMessage: function(message) {
+                    var self = this
+                    self.messageArray.push({isSuccess: false, isError: true, message: message});
+                    setTimeout(function(){
+                        $("#error-alert").slideUp(500);
+                        self.messageArray = {}
+                    }, 5000);
+                },
+                handleVueError: function(err){
+                    app.showErrorMessage(err.message);
                 }
             },
             mounted: function () {
                 var self = this
                 self.$nextTick(function () {
-                    if(self.literatureList && self.literatureList.length > 0){   
+                    if (self.literatureList && self.literatureList.length > 0) {
                         self.noResults = false
-                    } 
+                    }
                     else {
                         self.noResults = true
                     }
@@ -432,6 +631,7 @@
             }
 
         })
+
     }
 
     function handleAjaxError() {

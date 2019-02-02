@@ -7,6 +7,7 @@ router.post('/add', authValidator.authValidator(), function(req, res){
     let requestDetails = req.body
     if(requestDetails)
     {
+        requestDetails.userId = res.locals.user.userId
         literatureRequest.addLiteratureRequest(req, res, requestDetails, handleSuccessResponse, handleErrorResponse)
         return
     }
@@ -41,7 +42,7 @@ function handleSuccessResponse(req, res, responseData, displayMessage)
 function handleErrorResponse(req, res, err)
 {
     req.flash('error', err.message);
-    req.sendStatus(500);
+    res.sendStatus(500);
 }
 
 module.exports = router;

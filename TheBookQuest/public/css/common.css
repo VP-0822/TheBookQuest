@@ -81,9 +81,9 @@
     border: 1px solid #00aced;
   }
   .searchFilter .btn-search:hover {
-    background-color: #b20a11;
+    background-color: #005675;
     color: #fff;
-    border: 1px solid #b20a11;
+    border: 1px solid #005675;
   }
   .searchFilter .label-icon {
     display: none;  
@@ -289,3 +289,11 @@
     text-shadow: 0 0 5px orange;
   }
   
+  [v-cloak] {
+    display: none;
+  }
+
+  .form-group.required .control-label:after {
+    content:" *";
+    color:red;
+  }
