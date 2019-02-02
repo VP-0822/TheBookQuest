@@ -3,7 +3,7 @@
 <div style="background-color:dimgray" id="ordersDiv" v-cloak>
     <div class="row" style="height: 20px;"></div>
     <div class="row">
-        <div class="col-sm-8 offset-sm-2 align-middle" style="height:85%">
+        <div class="col-sm-10 offset-sm-1 align-middle" style="height:85%">
             <div class="row card shadow-sm" style="height:98%">
                 <div class="col-sm-10 offset-sm-1" style="margin-top: 10px;">
                     <h3 style="text-align: center">Your orders</h3>
@@ -16,6 +16,7 @@
                                         <th scope="col"class="text-center">Literature Title</th>
                                         <th scope="col" class="text-center">Issue Date</th>
                                         <th scope="col" class="text-center">Return Date</th>
+                                        <th scope="col" class="text-center">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -24,6 +25,7 @@
                                         <td class="text-center">{{order.literatureTitle}}</td>
                                         <td class="text-center">{{order.issueDateString}}</td>
                                         <td class="text-center">{{order.returnDateString}}</td>
+                                        <td class="text-center">{{order.status}}</td>
                                     </tr>
                                 </tbody>
                             </table>

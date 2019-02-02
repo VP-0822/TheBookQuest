@@ -50,6 +50,7 @@ issues //Orders
 	userId : String
 	issueDate : Timestamp
 	returnDate : Timestamp
+	status : String
 	
 	
 	

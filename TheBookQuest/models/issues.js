@@ -15,7 +15,11 @@ const IssueSchema = mongoose.Schema({
         required: true
     },
     issueDate : Date,
-    returnDate : Date
+    returnDate : Date,
+    status : {
+        type: String,
+        required: true
+    }
 });
 
 const Issue = module.exports = mongoose.model('issues', IssueSchema, 'issues');
