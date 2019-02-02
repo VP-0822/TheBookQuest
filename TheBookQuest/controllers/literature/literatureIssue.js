@@ -83,9 +83,21 @@ exports.returnAvailableBookCount = function(req, res, query, handleSuccessRespon
 exports.getUserIssues = function(req, res, userId, handleSuccessResponse, handleErrorResponse){
     if(userId)
     {
-        Issue.find({userId : userId}).lean().exec(function(err, issues){
+        Issue.aggregate([{
+            $match:{
+            "userId" : userId
+            }
+        },
+        {$lookup: {
+            from: "literatures",
+            localField: "literatureId",
+            foreignField: "literatureId",
+            as: "literatures"
+        }        
+    }]).exec(function(err, issues){
             if(err)
             {
+                console.log(err);
                 handleErrorResponse(req, res, err)
                 return
             }

@@ -1,0 +1,103 @@
+<% include partials/header %>
+<link rel="stylesheet" href="/css/yourOrders.css">
+<div style="background-color:dimgray" id="ordersDiv" v-cloak>
+    <div class="row" style="height: 20px;"></div>
+    <div class="row">
+        <div class="col-sm-8 offset-sm-2 align-middle" style="height:85%">
+            <div class="row card shadow-sm" style="height:98%">
+                <div class="col-sm-10 offset-sm-1" style="margin-top: 10px;">
+                    <h3 style="text-align: center">Your orders</h3>
+                <br/>
+                    <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="text-center">Issue Id</th>
+                                        <th scope="col"class="text-center">Literature Title</th>
+                                        <th scope="col" class="text-center">Issue Date</th>
+                                        <th scope="col" class="text-center">Return Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="order in orders">
+                                        <td class="text-center">{{order.issueId}}</td>
+                                        <td class="text-center">{{order.literatureTitle}}</td>
+                                        <td class="text-center">{{order.issueDateString}}</td>
+                                        <td class="text-center">{{order.returnDateString}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="ordersError" style="display: none">
+    <div class="row">
+        <div class="col-sm-6 offset-sm-3">
+            <h3> Unable to fetch orders, please try again after some time. </h3>
+        </div>
+    </div>
+</div>
+<script>
+var app;
+var orders;
+var userId = '<%= locals.user.userId %>';
+$(document).ready(function () {
+    fetchOrders();
+})
+
+function fetchOrders(){
+    $.ajax({
+            url: "http://localhost:3000/user/"+userId+'/issues',
+            success: function (data) {
+                handleAjaxSuccess(data);
+            },
+            error: function () {
+                handleAjaxError()
+            }
+        });
+}
+
+function handleAjaxSuccess(ajaxData) {
+    orders = ajaxData;
+    $.ajax({
+        url: "http://localhost:3000/literatures",
+        success: function (data) {
+            handleLiteratureTypeList(data);
+        },
+        error: function () {
+            handleAjaxError()
+        }
+    });
+}
+
+function handleLiteratureTypeList(literatureList){
+    for (var i in orders) {
+        var order = orders[i];
+        var literatureTypeId = order.literatures[0].literatureTypeId;
+        for(var j in literatureList)
+        {
+            orders[i].literatureTitle = literatureList[j].title;
+            orders[i].issueDateString = dateToString(new Date(orders[i].issueDate));
+            orders[i].returnDateString = dateToString(new Date(orders[i].returnDate));
+        }
+    }
+
+    app = new Vue({
+            el: '#ordersDiv',
+            data: {
+                orders : orders
+            },
+            methods: {
+            }
+    });
+}
+
+function handleAjaxError() {
+        $('#ordersDiv').hide();
+        $('#ordersError').show();
+    }
+</script>
+<% include partials/footer %>

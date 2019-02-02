@@ -1,0 +1,39 @@
+<% include partials/header %>
+<link rel="stylesheet" href="/css/yourProfile.css">
+<div style="background-color:dimgray" id="profileDiv">
+    <div class="row" style="height: 20px;"></div>
+    <div class="row">
+        <div class="col-sm-6 offset-sm-3 align-middle" style="height:85%">
+            <div class="row card shadow-sm" style="height:98%">
+                <div class="col-sm-8 offset-sm-2" style="margin-top: 10px;">
+                    <form>
+                        <h3 style="text-align: center">Your profile</h3>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="inputFN">First name</label>
+                                <input type="text" class="form-control" id="inputFN" placeholder="First name" value="<%= locals.user.firstname%>" readonly>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="inputLN">Last name</label>
+                                <input type="text" class="form-control" id="inputLN" placeholder="Last name" value="<%= locals.user.lastname%>" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="emailAddress">Email address</label>
+                            <input type="email" class="form-control" id="emailAddress" placeholder="Email address" value="<%= locals.user.email%>" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="matriculation">Matriculation number</label>
+                            <input type="text" class="form-control" id="matriculation" placeholder="Matriculation number" value="<%= locals.user.matriculation%>" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="dob">Date of birth</label>
+                            <input type="text" class="form-control" id="dob" placeholder="Date of birth" value="<%= locals.user.dob%>" readonly>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<% include partials/footer %>

@@ -28,7 +28,7 @@
 
     <div id="catalogue">
         <div class="row" style="padding-left: 10px; padding-right: 10px;">
-            <div class="col-md-4" v-for="(literature, index) in visibileLiteratureList">
+            <div class="col-md-4" v-for="(literature, index) in visibleLiteratureList">
                 <div class="card flex-md-row mb-4 shadow-sm h-md-250">
                     <div class="col-md-6 card-body d-flex flex-column align-items-start">
                         <strong class="d-inline-block mb-2 text-primary">{{ literature.title }}</strong>
@@ -143,7 +143,7 @@
                         <div class="row">
                             <div class="col-sm-3">
                                 <div class="review-block-name" v-for="user in review.users">{{user.firstname}}&nbsp;{{user.lastname}}</div>
-                                <div class="review-block-date">{{review.reviewDate}}</div>
+                                <div class="review-block-date">{{review.reviewDateString}}</div>
                             </div>
                             <div class="col-sm-9">
                                 <div>
@@ -299,7 +299,7 @@
             data: {
                 literatureList: ajaxData,
                 messageArray : [],
-                visibileLiteratureList: [],
+                visibleLiteratureList: [],
                 searchSelection: {
                     query: '',
                     queryType: 'all',
@@ -349,13 +349,11 @@
             methods: {
                 updateSearchResults: function (event) {
                     var self = this
-                    if (!self.searchSelection.query || self.searchSelection.query == '') {
-                        fetchLiteratures();
-                        return;
-                    }
-
                     var ajaxUrl = 'http://localhost:3000/literatures'
-                    if (self.searchSelection.queryType == 'all') {
+                    if(!self.searchSelection.query || self.searchSelection.query == '')
+                    {
+                    }
+                    else if (self.searchSelection.queryType == 'all') {
                         ajaxUrl = 'http://localhost:3000/literatures/search'
                     }
                     else if (self.searchSelection.queryType == 'title') {
@@ -396,6 +394,9 @@
                         self.literatureList = newData
                         app.updateVisibleLiteratureList();
                         self.noResults = true
+                    }
+                    if($(singleItem).is(":visible")){
+                        app.backToList();
                     }
                 },
                 selectLiterature: function (literatureTypeId, avoidToggleVisibility) {
@@ -486,7 +487,11 @@
                 },
                 handleReviewsSuccess: function (reviews) {
                     var self = this;
-                    self.selectedLiterature.reviews = reviews
+                    self.selectedLiterature.reviews = reviews;
+                    for(var i in self.selectedLiterature.reviews)
+                    {
+                        self.selectedLiterature.reviews[i].reviewDateString = dateToString(new Date(self.selectedLiterature.reviews[i].reviewDate));
+                    }
                 },
                 backToList: function () {
                     var self = this;
@@ -518,12 +523,12 @@
                 },
                 updateVisibleLiteratureList: function () {
                     var self = this;
-                    self.visibileLiteratureList = self.literatureList.slice((self.currentPage - 1) * self.pageSize, ((self.currentPage - 1) * self.pageSize) + self.pageSize);
+                    self.visibleLiteratureList = self.literatureList.slice((self.currentPage - 1) * self.pageSize, ((self.currentPage - 1) * self.pageSize) + self.pageSize);
 
                     self.noOfPages = Math.ceil(self.literatureList.length / self.pageSize);
 
                     //if we have 0 visible literatures, go back a page
-                    if (self.visibileLiteratureList.length == 0 && self.currentPage > 0) {
+                    if (self.visibleLiteratureList.length == 0 && self.currentPage > 0) {
                         app.updatePage(self.currentPage - 1);
                     }
                 },
@@ -603,7 +608,7 @@
                     self.messageArray.push({isSuccess: true, isError: false, message: message});
                     setTimeout(function(){
                         $("#success-alert").slideUp(500);
-                        self.messageArray = {}
+                        self.messageArray = []
                     }, 5000);
                 },
                 showErrorMessage: function(message) {
@@ -611,7 +616,7 @@
                     self.messageArray.push({isSuccess: false, isError: true, message: message});
                     setTimeout(function(){
                         $("#error-alert").slideUp(500);
-                        self.messageArray = {}
+                        self.messageArray = []
                     }, 5000);
                 },
                 handleVueError: function(err){
@@ -635,8 +640,8 @@
     }
 
     function handleAjaxError() {
-        $('welcome').hide();
-        $('welcomeError').show();
+        $('#welcome').hide();
+        $('#welcomeError').show();
     }
 
 </script>

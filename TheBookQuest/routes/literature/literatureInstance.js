@@ -69,7 +69,7 @@ function handleSuccessResponse(req, res, responseData, displayMessage)
 function handleErrorResponse(req, res, err)
 {
     req.flash('error', err.message);
-    req.sendStatus(500);
+    res.sendStatus(500);
 }
 
 

@@ -1,0 +1,84 @@
+<% include partials/header %>
+<link rel="stylesheet" href="/css/yourRequests.css">
+<div style="background-color:dimgray" id="requestsDiv" v-cloak>
+    <div class="row" style="height: 20px;"></div>
+    <div class="row">
+        <div class="col-sm-10 offset-sm-1 align-middle" style="height:85%">
+            <div class="row card shadow-sm" style="height:98%">
+                <div class="col-sm-10 offset-sm-1" style="margin-top: 10px;">
+                    <h3 style="text-align: center">Your requests</h3>
+                    <br />
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="text-center">Request Id</th>
+                                    <th scope="col" class="text-center">Literature Title</th>
+                                    <th scope="col" class="text-center">Comment</th>
+                                    <th scope="col" class="text-center">Request Date</th>
+                                    <th scope="col" class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="request in requests">
+                                    <td class="text-center">{{request.requestId}}</td>
+                                    <td class="text-center">{{request.literatureTitle}}</td>
+                                    <td class="text-center">{{request.comment}}</td>
+                                    <td class="text-center">{{request.requestDateString}}</td>
+                                    <td class="text-center">{{request.status}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="requestsError" style="display: none">
+    <div class="row">
+        <div class="col-sm-6 offset-sm-3">
+            <h3> Unable to fetch requests, please try again after some time. </h3>
+        </div>
+    </div>
+</div>
+<script>
+    var app;
+    var requests;
+    var userId = '<%= locals.user.userId %>';
+    $(document).ready(function () {
+        fetchRequests();
+    })
+
+    function fetchRequests() {
+        $.ajax({
+            url: "http://localhost:3000/user/" + userId + '/requests',
+            success: function (data) {
+                handleAjaxSuccess(data);
+            },
+            error: function () {
+                handleAjaxError()
+            }
+        });
+    }
+
+    function handleAjaxSuccess(ajaxData) {
+        requests = ajaxData;
+        for (var i in requests) {
+            requests[i].requestDateString = dateToString(new Date(requests[i].requestDate));;
+        }
+        app = new Vue({
+            el: '#requestsDiv',
+            data: {
+                requests: requests
+            },
+            methods: {}
+        });
+    }
+
+    function handleAjaxError() {
+        $('#requestsDiv').hide();
+        $('#requestsError').show();
+    }
+</script>
+<% include partials/footer %>

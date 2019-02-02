@@ -10,8 +10,24 @@ router.get('/request', authValidator.authValidator(), function(req, res){
     res.render('request',{ custSuccessMessage : req.flash('success'), custErrorMessage : req.flash('error')});
 });
 
+router.get('/contact', authValidator.authValidator(), function(req, res){
+    res.render('contact',{ custSuccessMessage : req.flash('success'), custErrorMessage : req.flash('error')});
+});
+
+router.get('/profile', authValidator.authValidator(), function(req, res){
+    res.render('yourProfile',{ custSuccessMessage : req.flash('success'), custErrorMessage : req.flash('error')});
+});
+
+router.get('/orders', authValidator.authValidator(), function(req, res){
+    res.render('yourOrders',{ custSuccessMessage : req.flash('success'), custErrorMessage : req.flash('error')});
+});
+
+router.get('/yourRequests', authValidator.authValidator(), function(req, res){
+    res.render('yourRequests',{ custSuccessMessage : req.flash('success'), custErrorMessage : req.flash('error')});
+});
+
 router.get('/',  function(req, res){
-    res.send('Work In Progress!!');
+    res.redirect('/welcome');
 })
 
 module.exports = router;
