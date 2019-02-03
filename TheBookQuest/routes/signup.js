@@ -34,8 +34,6 @@ router.post('/register', authValidator.isLoggedOut(), register.register);
 
 //forgot password
 router.post('/forgot', function (req, res, next) {
-    console.log('post forgot');
-    console.log(req.body.email);
     register.sendSecurityToken(req, res, next, req.body.email, forgotPasswordSuccess, forgotPasswordError);
 });
 
