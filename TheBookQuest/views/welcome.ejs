@@ -68,7 +68,7 @@
                     </button>
                 </div>
                 <div class="col-md-4  book-img">
-                    <img v-bind:src="'/assets/images/' + selectedLiterature.item.thumbnail" class="img-responsive">
+                    <img v-bind:src="'/assets/images/' + selectedLiterature.item.thumbnail" class="img-responsive" style=" height: 300px; width: 250px;">
                 </div>
                 <div class="col-md-5 product_content">
                     <h3 class="modal-title" id="myModalLabel">{{selectedLiterature.item.title}}</h3>
@@ -440,7 +440,7 @@
                     var self = this
                     if (data.avgRating[0]) {
                         self.selectedLiterature.avgRating = data.avgRating[0].average.toFixed(1),
-                            self.selectedLiterature.avgRatingForStars = Math.round(data.avgRating[0].average)
+                        self.selectedLiterature.avgRatingForStars = Math.round(data.avgRating[0].average)
                     }
                     self.selectedLiterature.noOfReviews = data.count
 
