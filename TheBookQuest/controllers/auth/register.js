@@ -1,6 +1,9 @@
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const randomstring = require("randomstring");
+const nodemailer = require('nodemailer');
+var crypto = require('crypto');
+var async = require('async');
 
 //Bring in User Model
 let User = require('../../models/user');
@@ -98,4 +101,153 @@ exports.getUserProfile = function(req, res, userId, handleSuccessResponse, handl
     handleErrorResponse(req, res, new Error('User id not provided'))
 }
 
+exports.sendSecurityToken = function(req, res, next, email, handleSuccessResponse, handleErrorResponse)
+{
+    console.log(email)
+    if(email)
+    {
+        
+        async.waterfall([
+            function (done) {
+                crypto.randomBytes(20, function (err, buf) {
+                    var token = buf.toString('hex');
+                    console.log(token)
+                    done(err, token);
+                });
+            },
+            function (token, done) {
+                User.findOne({
+                    email: email
+                }, function (err, user) {
+                    if (!user) {
+                        handleErrorResponse(req, res,'No account with that email address exists.');
+                        return;
+                    }
+    
+                    user.resetPasswordToken = token;
+                    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+                    console.log(user)
+                    user.save(function (err) {
+                        done(err, token, user);
+                    });
+                });
+            },
+            function (token, user, done) {
+                var smtpTransport = nodemailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    port: 587,
+                    secure: false,
+                    auth: {
+                        user: 'bikehiresystem@gmail.com',
+                        pass: 'bikehire123'
+                    }
+                });
+                var mailOptions = {
+                    to: user.email,
+                    from: 'bikehiresystem@gmail.com',
+                    subject: 'TheBookQuest Password Reset',
+                    text: 'You are receiving this because you have requested the reset of the password for your account.\n\n' +
+                        'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+                        'http://' + req.headers.host + '/users/reset/' + token + '\n\n' +
+                        'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+                };
+                smtpTransport.sendMail(mailOptions, function (err) {
+                    req.flash('success', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
+                    done(err, 'done');
+                });
+            }
+        ], function (err) {
+            if (err) return next(err);
+            handleSuccessResponse(req, res);
+        });
+        return;
+    }
+    handleErrorResponse(req, res)
+}
+
+exports.verifySecurityToken = function(req, res, token, handleSuccessResponse, handleErrorResponse){
+    if(token)
+    {
+        User.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: {
+                $gt: Date.now()
+            }
+        }, function (err, user) {
+            if (!user) {
+                handleErrorResponse(req, res, 'Password reset token is invalid or has expired.');
+                return;
+            }
+            handleSuccessResponse(req, res);
+        });
+        return;
+    }
+    handleErrorResponse(req, res)
+}
+
+exports.resetPassword = function(req, res, token, password, handleSuccessResponse, handleErrorResponse){
+    async.waterfall([
+        function (done) {
+            User.findOne({
+                resetPasswordToken: token,
+                resetPasswordExpires: {
+                    $gt: Date.now()
+                }
+            }, function (err, user) {
+                if (!user) {
+                    handleErrorResponse(req, res, 'Password reset token is invalid or has expired.');
+                    return;
+                }
+                req.checkBody('password', 'Password is required').notEmpty();
+                req.checkBody('confirm', 'Passwords do not match').equals(password);
+
+                let errors = req.validationErrors();
+
+                if (errors) {
+                    handleErrorResponse(req, res, errors[0].msg);
+                    return;
+                } else {
+                    user.password = password;
+                    user.resetPasswordToken = undefined;
+                    user.resetPasswordExpires = undefined;
+                    bcrypt.genSalt(10, function (err, salt) {
+                        bcrypt.hash(user.password, salt, function (err, hash) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            user.password = hash;
+                            user.save(function (err) {
+                                done(err, user);
+                            });
+                        });
+                    });
+                }
+            });
+        },
+        function (user, done) {
+            var smtpTransport = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 587,
+                secure: false,
+                auth: {
+                    user: 'bikehiresystem@gmail.com',
+                    pass: 'bikehire123'
+                }
+            });
+            var mailOptions = {
+                to: user.email,
+                from: 'bikehiresystem@gmail.com',
+                subject: 'Your password has been changed',
+                text: 'Hello,\n\n' +
+                    'This is a confirmation that the password for your account ' + user.email + ' has just been changed.\n'
+            };
+            smtpTransport.sendMail(mailOptions, function (err) {
+                req.flash('success', 'Success! Your password has been changed.');
+                done(err);
+            });
+        }
+    ], function (err) {
+        handleSuccessResponse(req, res);
+    });
+}
 //module.exports = {register: require('.')}
