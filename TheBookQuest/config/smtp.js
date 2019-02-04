@@ -3,7 +3,7 @@ module.exports = {
     port: 587,
     secure: false,
     auth: {
-        user: 'bikehiresystem@gmail.com',
-        pass: 'bikehire123'
+        user: 'thebookquest19@gmail.com',
+        pass: 'bookquest123'
     }
 }

@@ -1,20 +1,22 @@
 const Literature = require('../../models/literatures');
 const Issue = require('../../models/issues');
 const randomstring = require('randomstring');
+const mail = require('../../config/mail');
 
 exports.issueLiteratureById = function (req, res, query, handleSuccessResponse, handleErrorResponse) {
     if (query) {
         let literatureId = query.issue.literatureId;
         let userId = query.issue.userId;
+        var issueId = randomstring.generate(10)
         let newIssue = new Issue({
-            issueId: randomstring.generate(10),
+            issueId: issueId,
             literatureId: literatureId,
             userId: userId,
             issueDate: query.issue.startDate,
             returnDate: query.issue.returnDate,
             status: 'issued'
         });
-        newIssue.save(function (err, issue) {
+        newIssue.save(function (err) {
             if (err) {
                 handleErrorResponse(req, res, err)
                 return
@@ -30,9 +32,11 @@ exports.issueLiteratureById = function (req, res, query, handleSuccessResponse, 
                     handleErrorResponse(req, res, err)
                     return
                 }
+                mail.sendIssuedLitConfirmation(req, res, userId,literatureId,issueId);
+                
                 handleSuccessResponse(req, res, literatureInstance)
                 return
-            })
+                })
         });
         return
     }
@@ -53,7 +57,7 @@ exports.returnLiterature = function (req, res, query, handleSuccessResponse, han
             status: 'returned'
         }
 
-        Issue.findOneAndUpdate(searchQuery, updateIssue, function (err, issue) {
+        Issue.findOneAndUpdate(searchQuery, updateIssue, function (err) {
             if (err) {
                 handleErrorResponse(req, res, err)
                 return
@@ -68,9 +72,11 @@ exports.returnLiterature = function (req, res, query, handleSuccessResponse, han
                     handleErrorResponse(req, res, err)
                     return
                 }
+
                 handleSuccessResponse(req, res, literatureInstance)
                 return
             })
+            mail.sendReturnLitConfirmation(req, res, userId,literatureId,issueId);
             return
         })
     }
@@ -126,5 +132,7 @@ exports.getUserIssues = function (req, res, userId, handleSuccessResponse, handl
         })
         return
     }
+    
     handleErrorResponse(req, res, new Error('Invalid user id provided'))
 }
+

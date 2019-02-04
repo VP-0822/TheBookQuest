@@ -81,9 +81,12 @@ function handleLiteratureTypeList(literatureList){
         var literatureTypeId = order.literatures[0].literatureTypeId;
         for(var j in literatureList)
         {
-            orders[i].literatureTitle = literatureList[j].title;
-            orders[i].issueDateString = dateToString(new Date(orders[i].issueDate));
-            orders[i].returnDateString = dateToString(new Date(orders[i].returnDate));
+            if(literatureTypeId == literatureList[j].literatureTypeId)
+            {
+                orders[i].literatureTitle = literatureList[j].title;
+                orders[i].issueDateString = dateToString(new Date(orders[i].issueDate));
+                orders[i].returnDateString = dateToString(new Date(orders[i].returnDate));
+            }
         }
     }
 

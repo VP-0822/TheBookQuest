@@ -1,5 +1,6 @@
 const LiteratureRequest = require('../../models/literatureRequests')
 const randomstring = require('randomstring');
+const mail = require('../../config/mail');
 
 exports.addLiteratureRequest = function(req, res, requestDetails, handleSuccessResponse, handleErrorResponse){
     let userId = requestDetails.userId
@@ -26,6 +27,7 @@ exports.addLiteratureRequest = function(req, res, requestDetails, handleSuccessR
             handleErrorResponse(req, res, err)
             return
         }
+        mail.sendRequestLitConfirmation(req, res, userId,literatureTitle);
 
         handleSuccessResponse(req, res, docs)
     })
