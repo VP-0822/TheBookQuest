@@ -22,17 +22,40 @@ This solution is built to enhance the library system by allowing users to pre bo
 ## Technology used
 - Nodejs (for implementation of logic)
 - VueJs (framework for user interfaces)
-- API provided by NOSQL engine (for database management)
+- Mongo DB (for database management)
 
 ## Installation Guide
-
-
-
+1. Install Node Js
+2. install following node packages
+```
+npm install async,bcryptjs,body-parser,ejs,express,express-flash,express-messages,express-session,express-validator, mongoose,     
+nodemailer, passport, passport-local, randomstring
+```
+3. install Mongo DB
+4. Run mongo.exe as administrator
+5. Create database using command:
+```
+use thebook
+```
+6. create following collections:
+```
+db.createCollection('issues')
+db.createCollection('literatureTypes')
+db.createCollection('literatures')
+db.createCollection('reviews')
+db.createCollection('users')
+db.createCollection('literatureRequests')
+```
+7. Now run 
+```
+npm start
+```
 
 ## Authors
 ### VirajKumar Patel (11011755)
-
+    Worked on Controller, routes, Model (Using mongoose), UI design
 ### Akansha Pandey (11011758)
+    Worked on views, vue.js, UI design
 
 
 
