@@ -7,6 +7,7 @@ users :
 	matriculation : Number
 	password : String
 	registrationDate : DateTime
+	isVerified : boolean
 	
 literatureTypes
 	literatureTypeId : String
@@ -51,6 +52,9 @@ issues //Orders
 	issueDate : Timestamp
 	returnDate : Timestamp
 	status : String
+tokens
+	userId : String
+	token : String
 	
 	
 	
