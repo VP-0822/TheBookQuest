@@ -49,6 +49,7 @@ db.createCollection('literatures')
 db.createCollection('reviews')
 db.createCollection('users')
 db.createCollection('literatureRequests')
+db,createCollection('tokens')
 ```
 7. Now run 
 ```
