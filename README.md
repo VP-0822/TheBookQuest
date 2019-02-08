@@ -32,8 +32,7 @@ This solution is built to enhance the library system by allowing users to pre bo
 1. Install Node Js
 2. install following node packages
 ```
-npm install async,bcryptjs,body-parser,ejs,express,express-flash,express-messages,express-session,express-validator, mongoose,     
-nodemailer, passport, passport-local, randomstring
+npm install async bcryptjs body-parser ejs express express-flash express-messages express-session express-validator mongoose nodemailer passport passport-local randomstring
 ```
 3. install Mongo DB
 4. Run mongo.exe as administrator
