@@ -51,8 +51,9 @@ $(document).ready(function () {
 })
 
 function fetchOrders(){
+    var url ='http://'+window.location.host+'/user/'
     $.ajax({
-            url: "http://localhost:3000/user/"+userId+'/issues',
+            url: url+userId+'/issues',
             success: function (data) {
                 handleAjaxSuccess(data);
             },
@@ -64,8 +65,9 @@ function fetchOrders(){
 
 function handleAjaxSuccess(ajaxData) {
     orders = ajaxData;
+    var url ='http://'+window.location.host+'/literatures'
     $.ajax({
-        url: "http://localhost:3000/literatures",
+        url: url,
         success: function (data) {
             handleLiteratureTypeList(data);
         },

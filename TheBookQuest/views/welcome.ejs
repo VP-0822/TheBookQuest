@@ -278,8 +278,9 @@
     })
 
     function fetchLiteratures() {
+        var url = 'http://' + window.location.host + '/literatures';
         $.ajax({
-            url: "http://localhost:3000/literatures",
+            url: url,
             success: function (data) {
                 handleAjaxSuccess(data);
             },
@@ -349,24 +350,24 @@
             methods: {
                 updateSearchResults: function (event) {
                     var self = this
-                    var ajaxUrl = 'http://localhost:3000/literatures'
+                    var ajaxUrl = 'http://'+window.location.host+'/literatures'
                     if(!self.searchSelection.query || self.searchSelection.query == '')
                     {
                     }
                     else if (self.searchSelection.queryType == 'all') {
-                        ajaxUrl = 'http://localhost:3000/literatures/search'
+                        ajaxUrl = 'http://'+window.location.host+'/literatures/search'
                     }
                     else if (self.searchSelection.queryType == 'title') {
-                        ajaxUrl = 'http://localhost:3000/literatures/searchtitle'
+                        ajaxUrl = 'http://'+window.location.host+'/literatures/searchtitle'
                     }
                     else if (self.searchSelection.queryType == 'author') {
-                        ajaxUrl = 'http://localhost:3000/literatures/searchauthor'
+                        ajaxUrl = 'http://'+window.location.host+'/literatures/searchauthor'
                     }
                     else if (self.searchSelection.queryType == 'publisher name') {
-                        ajaxUrl = 'http://localhost:3000/literatures/searchpublishers'
+                        ajaxUrl = 'http://'+window.location.host+'/literatures/searchpublishers'
                     }
                     else if (self.searchSelection.queryType == 'tags') {
-                        ajaxUrl = 'http://localhost:3000/literatures/searchtags'
+                        ajaxUrl = 'http://'+window.location.host+'/literatures/searchtags'
                     }
 
                     $.ajax({
@@ -388,10 +389,12 @@
                     if (newData && newData.length > 0) {
                         self.noResults = false
                         self.literatureList = newData;
+                        self.currentPage = 1;
                         app.updateVisibleLiteratureList();
                     }
                     else {
-                        self.literatureList = newData
+                        self.literatureList = newData;
+                        self.currentPage = 1;
                         app.updateVisibleLiteratureList();
                         self.noResults = true
                     }
@@ -417,9 +420,9 @@
 
                                 }
                             }
-
+                            var url = 'http://'+window.location.host+'/reviews/rating';
                             $.ajax({
-                                url: 'http://localhost:3000/reviews/rating',
+                                url: url,
                                 beforeSend: function (request) {
                                     request.setRequestHeader("search-query", "{\"literatureTypeId\" : \"" + literatureTypeId + "\"}");
                                 },
@@ -443,9 +446,9 @@
                         self.selectedLiterature.avgRatingForStars = Math.round(data.avgRating[0].average)
                     }
                     self.selectedLiterature.noOfReviews = data.count
-
+                    var url = 'http://'+window.location.host+'/literature/available';
                     $.ajax({
-                        url: 'http://localhost:3000/literature/available',
+                        url: url,
                         beforeSend: function (request) {
                             request.setRequestHeader("search-query", "{\"literatureTypeId\" : \"" + self.selectedLiterature.item.literatureTypeId + "\"}");
                         },
@@ -473,9 +476,9 @@
                             to: date
                         }
                     }
-
+                    var url = 'http://'+window.location.host+'/reviews/literature/';
                     $.ajax({
-                        url: 'http://localhost:3000/reviews/literature/' + self.selectedLiterature.item.literatureTypeId,
+                        url: url + self.selectedLiterature.item.literatureTypeId,
                         success: function (data) {
                             app.handleReviewsSuccess(data);
                         },
@@ -499,8 +502,9 @@
                 },
                 submitReview: function () {
                     var self = this;
+                    var url = 'http://'+window.location.host+'/reviews/add';
                     $.ajax({
-                        url: 'http://localhost:3000/reviews/add',
+                        url: url,
                         type: "post",
                         data: { literatureTypeId: self.selectedLiterature.item.literatureTypeId, comment: self.selectedLiterature.newComment, rating: self.selectedLiterature.newCommentRating },
                         success: function (data) {
@@ -561,7 +565,7 @@
                 submitIssue : function(){
                     var self = this
                     var literatureTypeId = self.selectedLiterature.item.literatureTypeId
-                    var instancesUrl = 'http://localhost:3000/literature/instances/' + literatureTypeId
+                    var instancesUrl = 'http://'+window.location.host+'/literature/instances/' + literatureTypeId
                     $.ajax({
                         url: instancesUrl,
                         success: function (data) {
@@ -584,8 +588,9 @@
                     {
                         litInstanceId = instances[0].literatureId; 
                     }
+                    var url ='http://'+window.location.host+'/literature/issue'
                     $.ajax({
-                        url: 'http://localhost:3000/literature/issue',
+                        url: url,
                         type: "post",
                         data: { issue : {literatureId : litInstanceId, startDate : self.selectedLiterature.issue.startDate, returnDate: self.selectedLiterature.issue.returnDate}},
                         success: function (data) {

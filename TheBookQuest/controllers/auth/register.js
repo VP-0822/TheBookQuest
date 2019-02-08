@@ -7,14 +7,31 @@ const mail = require('../../config/mail');
 
 //Bring in User Model
 let User = require('../../models/user');
+let Token = require('../../models/token');
 
 // login process
 exports.login=function(req, res, next){
-    passport.authenticate('local',{
-        successRedirect:'/welcome',
-        failureRedirect:'/users/login',
-        failureFlash: true
-    })(req,res, next);
+    User.findOne({email : req.body.email}, function(err, user){
+        if(err)
+        {
+            req.flash('error', 'User account doesn\'t exist');
+            res.render('register', {custSuccessMessage: req.flash('success'),custErrorMessage: req.flash('error')});
+            return;
+        }
+
+        if(user.isVerified == false)
+        {
+            req.flash('error', 'Your account is not verified. Please verify your account.');
+            res.render('login', {custSuccessMessage: req.flash('success'),custErrorMessage: req.flash('error')});
+            return;
+        }
+
+        passport.authenticate('local',{
+            successRedirect:'/welcome',
+            failureRedirect:'/users/login',
+            failureFlash: true
+        })(req,res, next);
+    });
 };
 
 exports.logout = function(req, res){
@@ -51,7 +68,7 @@ exports.register=function(req, res){
             req.flash('error',errors[0].msg);
         }
         //res.redirect('/users/register');
-        req.render('/register');
+        res.render('register', {custSuccessMessage: req.flash('success'),custErrorMessage: req.flash('error')});
         return;
     } else {
         var newUser = new User({
@@ -76,9 +93,19 @@ exports.register=function(req, res){
                         return;
                     }
                     else{
-                        req.flash('success','You are successfully registered!');
-                        res.redirect('/users/login');
-                        return;
+                        var token = new Token({ userId: newUser.userId, token: crypto.randomBytes(16).toString('hex') });
+                        token.save(function(err){
+                         if(err){
+                                console.log(err);
+                                return;
+                            }
+
+                            mail.sendEmailConfirmation(req, res, email, token.token);
+                            req.flash('success','You are successfully registered! A verification email has been sent to ' + email);
+                            res.redirect('/users/login');
+                            return;
+                        })
+
                     }
                 });
             });
@@ -160,6 +187,49 @@ exports.verifySecurityToken = function(req, res, token, handleSuccessResponse, h
         return;
     }
     handleErrorResponse(req, res)
+}
+
+exports.emailConfirmationOnRegistration = function(req, res, token){
+    if(token)
+    {
+        Token.findOne({ token: token }, function (err, token) {
+            if(err || !token)
+            {
+                req.flash('error', 'Invalid confirmation token provided');
+                res.render('login', {custSuccessMessage: req.flash('success'),custErrorMessage: req.flash('error')});
+                return;
+            }
+
+            User.findOne({userId: token.userId}, function(err, user){
+                if(err || !user)
+                {
+                    req.flash('error', 'Not able to find user');
+                    res.render('login', {custSuccessMessage: req.flash('success'),custErrorMessage: req.flash('error')});
+                    return;
+                }
+
+                user.isVerified = true;
+                user.save(function(err){
+                    if(err)
+                    {
+                        req.flash('error', 'Unable to verify user. Please try after sometime.');
+                        res.render('login', {custSuccessMessage: req.flash('success'),custErrorMessage: req.flash('error')});
+                        return;
+                    }
+
+                    req.flash('success','Your account has been verified successfully. Please login using valid credentials.');
+                    res.redirect('/users/login');
+                    return;
+
+                });
+            });
+        });
+        return;
+    }
+    req.flash('error', 'Confirmation token not provided');
+    res.render('login', {custSuccessMessage: req.flash('success'),custErrorMessage: req.flash('error')});
+    return;
+
 }
 
 exports.resetPassword = function(req, res, token, password, handleSuccessResponse, handleErrorResponse){

@@ -22,7 +22,7 @@
                         <div class="form-group required">
                             <label for="litTitle" class="control-label">Literature title</label>
                             <input type="text" class="form-control" id="litTitle" placeholder="Enter literature title"
-                                required="true" v-model="request.title">
+                                required v-model="request.title">
                         </div>
                         <div class="form-group">
                             <label for="isbn">ISBN</label>
@@ -66,8 +66,9 @@
         methods: {
             submitRequest: function () {
                 var self = this;
+                var url = 'http://'+window.location.host+'/requests/add';
                 $.ajax({
-                    url: 'http://localhost:3000/requests/add',
+                    url: url,
                     type: "post",
                     data: {
                         literatureTitle: self.request.title,
@@ -90,7 +91,6 @@
                 var self = this;
                 app.showSuccessMessage('New literature request added successfully!');
                 self.request = {};
-                console.log('success');
             },
             showSuccessMessage: function (message) {
                 var self = this

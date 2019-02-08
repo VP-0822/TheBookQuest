@@ -78,4 +78,8 @@ function resetPasswordSuccess(req, res){
 //logout
 router.get('/logout', authValidator.authValidator(), register.logout);
 
+router.get('/emailconfirmation/:token',authValidator.isLoggedOut(), function(req, res){
+    register.emailConfirmationOnRegistration(req, res, req.params.token)
+});
+
 module.exports = router;

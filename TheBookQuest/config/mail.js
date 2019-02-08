@@ -117,3 +117,29 @@ exports.sendReturnLitConfirmation = function (req, res, userId,literatureId,issu
 
     
 }
+
+exports.sendEmailConfirmation = function (req, res, email,token){
+    var smtpTransport = nodemailer.createTransport({
+        host: smtpConfig.host,
+        port: smtpConfig.port,
+        secure: smtpConfig.secure,
+        auth: {
+            user: smtpConfig.auth.user,
+            pass: smtpConfig.auth.pass
+        }
+    }); 
+
+    var confiramtionUrl = 'http://'+ req.headers.host +'/users/emailconfirmation/'+token;
+
+    var mailOptions = {
+        to:email,
+        from: 'thebookquest19@gmail.com',
+        subject: 'Email Verification Token',
+        html: 'Hello,\n\n' +
+            'Please verify your account by clicking the link: ' + confiramtionUrl
+    };
+    smtpTransport.sendMail(mailOptions, function (err) {
+    });
+
+    
+}

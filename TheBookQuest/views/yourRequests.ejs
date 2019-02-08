@@ -51,8 +51,9 @@
     })
 
     function fetchRequests() {
+        var url ='http://'+window.location.host+'/user/'
         $.ajax({
-            url: "http://localhost:3000/user/" + userId + '/requests',
+            url: url + userId + '/requests',
             success: function (data) {
                 handleAjaxSuccess(data);
             },
