@@ -28,7 +28,7 @@
     "express-session": "^1.17.1",
     "express-validator": "^5.3.1",
     "mongoose": "^5.9.25",
-    "nodemailer": "^5.1.1",
+    "nodemailer": "^6.4.16",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "randomstring": "^1.1.5"
